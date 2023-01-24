@@ -48,7 +48,7 @@ class FirstApp(cmd2.Cmd):
         else:
             self.poutput("Directorio no valido")
     
-    #parse mover
+    #Parse mover
     mov_parser = argparse.ArgumentParser()
     mov_parser.add_argument('Archivos', type=str ,nargs='+',help = "Los archivos a utilizar")
     mov_parser.add_argument('Directorio_Destino' , type=str,nargs=1, help = "Directorio destino")
@@ -74,7 +74,7 @@ class FirstApp(cmd2.Cmd):
         else:
             self.poutput("Directorio no valido")
     
-    # parser renombrar
+    #Parser renombrar
     renombrar_parser = argparse.ArgumentParser()
     renombrar_parser.add_argument('Archivo', type=str ,nargs='+',help = "Los archivos a renombrar")
     renombrar_parser.add_argument('Nuevo_nombre' , type=str,nargs=1, help = "Nuevo nombre del archivo")
@@ -92,7 +92,13 @@ class FirstApp(cmd2.Cmd):
                     self.poutput("archivo renombrado")
         else:
             self.poutput("archivo no valido")         
-         
+    
+    #Parse del pwd 
+    pwd_parser = argparse.ArgumentParser(description='Imprime el directorio donde se encuentra la shell')
+    @cmd2.with_argparser(pwd_parser)
+    def do_pwd(self, args: argparse.Namespace) -> None:
+       print(os.path.dirname(os.path.realpath(__file__)))
+    
     listar_parser = argparse.ArgumentParser()
     listar_parser.add_argument('Directorio_Destino' , default= os.getcwd(), type=str, help = "Directorio destino")
     @cmd2.with_argparser(listar_parser)
