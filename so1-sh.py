@@ -23,12 +23,11 @@ def verificar_archivo(arch) -> bool:
 
 class FirstApp(cmd2.Cmd):
     """A simple cmd2 application."""
-    # parser copiar y mover
-    cop_mov_parser = argparse.ArgumentParser()
-    cop_mov_parser.add_argument('Archivos', type=str ,nargs='+',help = "Los archivos a utilizar")
-    cop_mov_parser.add_argument('Directorio_Destino' , type=str,nargs=1, help = "Directorio destino")
-
-    @cmd2.with_argparser(cop_mov_parser)
+    # parser copiar
+    cop_parser = argparse.ArgumentParser()
+    cop_parser.add_argument('Archivos', type=str ,nargs='+',help = "Los archivos a utilizar")
+    cop_parser.add_argument('Directorio_Destino' , type=str,nargs=1, help = "Directorio destino")
+    @cmd2.with_argparser(cop_parser)
     def do_copiar(self, args: argparse.Namespace) -> None:
         if verificar_direccion(args.Directorio_Destino[0]):
             destino = os.path.abspath(args.Directorio_Destino[0])
@@ -48,8 +47,12 @@ class FirstApp(cmd2.Cmd):
             destino.close()         
         else:
             self.poutput("Directorio no valido")
-
-    @cmd2.with_argparser(cop_mov_parser)
+    
+    #parse mover
+    mov_parser = argparse.ArgumentParser()
+    mov_parser.add_argument('Archivos', type=str ,nargs='+',help = "Los archivos a utilizar")
+    mov_parser.add_argument('Directorio_Destino' , type=str,nargs=1, help = "Directorio destino")
+    @cmd2.with_argparser(mov_parser)
     def do_mover(self, args: argparse.Namespace) -> None:
         if verificar_direccion(args.Directorio_Destino[0]):
             destino = os.path.abspath(args.Directorio_Destino[0])
