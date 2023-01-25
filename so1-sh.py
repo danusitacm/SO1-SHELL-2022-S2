@@ -97,18 +97,17 @@ class FirstApp(cmd2.Cmd):
     pwd_parser = argparse.ArgumentParser(description='Imprime el directorio actual de trabajo.')
     @cmd2.with_argparser(pwd_parser)
     def do_pwd(self, args: argparse.Namespace) -> None:
-       print(os.path.dirname(os.path.realpath(__file__)))
+       self.poutput(os.path.dirname(os.path.realpath(__file__)))
     
     #Parse de listar
     listar_parser = argparse.ArgumentParser(description='Lista los archivos y directorios de un directorio determinado.')
-    listar_parser.add_argument('--Directorio_Destino' , default=os.getcwd(), type=str, help ="Directorio destino")
+    listar_parser.add_argument('Directorio_Destino',nargs='?', default=os.getcwd(), type=str, help ="Directorio destino")
     @cmd2.with_argparser(listar_parser)
-    def do_listar(self, args) -> None:
-        self.poutput(args.Directorio_Destino[0])
-        if verificar_direccion(args.Directorio_Destino[0]):
-            os.path.abspath(args.Directorio_Destino[0])
-            for path in Path(args.Directorio_Destino[0]).glob('/*'):
-                self.poutput(path.name)
+    def do_listar(self, args: argparse.Namespace) -> None:
+        if verificar_direccion(args.Directorio_Destino):
+            dirs = os.listdir(args.Directorio_Destino)
+            for file in dirs:
+               self.poutput(file)
         else:
             self.poutput("Directorio no valido")
 
