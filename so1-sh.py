@@ -23,6 +23,13 @@ def verificar_archivo(arch) -> bool:
 
 class FirstApp(cmd2.Cmd):
     """A simple cmd2 application."""
+    delattr(cmd2.Cmd,'do_shell')
+    delattr(cmd2.Cmd,'do_set')
+    
+    def __init__(self):
+        builtin_commands=['alias','edit','history','py','run_pyscript','run_script','shortcuts','macro']
+        super().__init__()
+        self.hidden_commands.extend(builtin_commands) #Para esconder los Builtin Commands
     # parser copiar
     cop_parser = argparse.ArgumentParser(description='Copiar un archivo en un directorio determinado.')
     cop_parser.add_argument('Archivos', type=str ,nargs='+',help = 'Los archivos a utilizar')
@@ -134,16 +141,31 @@ class FirstApp(cmd2.Cmd):
             os.chdir(args.Directorio_Destino)
         else:
             self.poutput('Directorio no valido')
-     #Parse de permisos
+    
+    #Parse de permisos
     permiso_parser=argparse.ArgumentParser(description='Cambiar los permisos sobre un archivo o un directorio.')
+    permiso_parser.add_argument('Permisos',type=str)
+    permiso_parser.add_argument('Path',type=str)
     @cmd2.with_argparser(permiso_parser)
-    def do_ir(self, args: argparse.Namespace) -> None:
-        self.poutput(args.Directorio_Destino)
-        if verificar_direccion(args.Directorio_Destino):
-            os.path.abspath(args.Directorio_Destino)
-            os.chdir(args.Directorio_Destino)
+    def do_permiso(self, args: argparse.Namespace) -> None:
+        if verificar_direccion(args.Path):
+            os.path.abspath(args.Path)
+            os.chmod(args.Path, int(args.Permisos,8))
         else:
             self.poutput('Directorio no valido')
+    
+    #Parse de permisos
+    permiso_parser=argparse.ArgumentParser(description='Cambiar los permisos sobre un archivo o un directorio.')
+    permiso_parser.add_argument('Permisos',type=str)
+    permiso_parser.add_argument('Path',type=str)
+    @cmd2.with_argparser(permiso_parser)
+    def do_permiso(self, args: argparse.Namespace) -> None:
+        if verificar_direccion(args.Path):
+            os.path.abspath(args.Path)
+            os.chmod(args.Path, int(args.Permisos,8))
+        else:
+            self.poutput('Directorio no valido')
+
 if __name__ == '__main__':
     import sys
     c = FirstApp()
