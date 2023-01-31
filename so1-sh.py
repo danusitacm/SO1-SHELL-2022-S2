@@ -1,33 +1,23 @@
 #!/usr/bin/env python
 """A simple cmd2 application."""
+import resources
 import cmd2
 import argparse
 import os
 import os.path
 import getpass
+import crypt
+import hashlib
+import logs
 from os import path
 import shutil
 from pathlib import Path
 
-def verificar_direccion(dir) -> bool:
-    os.path.abspath(dir)
-    if path.isdir(dir):
-        return True
-    else:
-        return False
-
-def verificar_archivo(arch) -> bool:
-    if path.isfile(arch):
-        return True
-    else:
-        return False
-
 class FirstApp(cmd2.Cmd):
     """A simple cmd2 application."""
-    delattr(cmd2.Cmd,'do_shell')
     delattr(cmd2.Cmd,'do_set')
     def __init__(self):
-        builtin_commands=['alias','edit','py','run_pyscript','run_script','shortcuts','macro']
+        builtin_commands=['alias','edit','py','run_pyscript','run_script','shortcuts','macro','shell']
         super().__init__()
         self.hidden_commands.extend(builtin_commands) #Para esconder los Builtin Commands
     # parser copiar
@@ -36,11 +26,11 @@ class FirstApp(cmd2.Cmd):
     cop_parser.add_argument('Directorio_Destino' , type=str,nargs=1, help = 'Directorio destino')
     @cmd2.with_argparser(cop_parser)
     def do_copiar(self, args: argparse.Namespace) -> None:
-        if verificar_direccion(args.Directorio_Destino[0]):
+        if resources.verificar_direccion(args.Directorio_Destino[0]):
             destino = os.path.abspath(args.Directorio_Destino[0])
             self.poutput(destino)
             for i in range(len(args.Archivos)):
-                if(verificar_archivo(args.Archivos[i])):
+                if(resources.verificar_archivo(args.Archivos[i])):
                     destino = os.path.join(destino,args.Archivos[i])
                     filedest = open(destino, 'w')
                     os.path.abspath(args.Archivos[i])
@@ -61,11 +51,11 @@ class FirstApp(cmd2.Cmd):
     mov_parser.add_argument('Directorio_Destino' , type=str,nargs=1, help = 'Directorio destino')
     @cmd2.with_argparser(mov_parser)
     def do_mover(self, args: argparse.Namespace) -> None:
-        if verificar_direccion(args.Directorio_Destino[0]):
+        if resources.verificar_direccion(args.Directorio_Destino[0]):
             destino = os.path.abspath(args.Directorio_Destino[0])
             self.poutput(destino)
             for i in range(len(args.Archivos)):
-                if(verificar_archivo(args.Archivos[i])):
+                if(resources.verificar_archivo(args.Archivos[i])):
                     destino = os.path.join(destino,args.Archivos[i])
                     filedest = open(destino, 'w')
                     os.path.abspath(args.Archivos[i])
@@ -87,7 +77,7 @@ class FirstApp(cmd2.Cmd):
     renombrar_parser.add_argument('Nuevo_nombre' ,type=str,nargs=1, help = 'Nuevo nombre del archivo')
     @cmd2.with_argparser(renombrar_parser)
     def do_renombrar(self, args: argparse.Namespace) -> None:
-        if(verificar_archivo(args.Archivo[0])):
+        if(resources.verificar_archivo(args.Archivo[0])):
                     destino = os.path.join(os.getcwd(),args.Nuevo_nombre[0])
                     filedest = open(destino, 'w')
                     os.path.abspath(args.Archivo[0])
@@ -108,17 +98,22 @@ class FirstApp(cmd2.Cmd):
     
     #Parse de listar
     listar_parser = argparse.ArgumentParser(description='Lista los archivos y directorios de un directorio determinado.')
-    listar_parser.add_argument('Directorio_Destino',nargs='?', type=str, help ='Directorio destino')
+    listar_parser.add_argument('Directorio_Destino',nargs='?',default='', type=str, help ='Directorio destino')
     @cmd2.with_argparser(listar_parser)
     def do_listar(self, args: argparse.Namespace) -> None:
-        args.Directorio_Destino=os.getcwd()
-        if verificar_direccion(args.Directorio_Destino):
+        self.poutput(args.Directorio_Destino)
+        if(args.Directorio_Destino==''):
+            args.Directorio_Destino=os.getcwd()
+            self.poutput(args.Directorio_Destino)
+        try:
             os.path.abspath(args.Directorio_Destino)
             dirs = os.listdir(args.Directorio_Destino)
             for file in dirs:
                self.poutput(file)
-        else:
-            self.poutput('Directorio no valido')
+        except Exception:
+            msg='listar: Directorio no valido.'
+            self.poutput(msg)
+            logs.SystemError(msg)
     
     #Parse de creardir
     creardir_parser =argparse.ArgumentParser(description='Crea un archivo.')
@@ -136,7 +131,7 @@ class FirstApp(cmd2.Cmd):
     @cmd2.with_argparser(ir_parser)
     def do_ir(self, args: argparse.Namespace) -> None:
         self.poutput(args.Directorio_Destino)
-        if verificar_direccion(args.Directorio_Destino):
+        if resources.verificar_direccion(args.Directorio_Destino):
             os.path.abspath(args.Directorio_Destino)
             os.chdir(args.Directorio_Destino)
         else:
@@ -174,9 +169,26 @@ class FirstApp(cmd2.Cmd):
     contrasena_parser.add_argument('Usuario',nargs='?',default=getpass.getuser(),type=str,help='Usuario que desea cambiar la contraseña')
     @cmd2.with_argparser(contrasena_parser)
     def do_contrasena(self, args: argparse.Namespace) -> None:
-        self.poutput(args.Usuario)   
+        paths=["/etc/shadow","/etc/passwd"]
+        if resources.check_string(args.Usuario,paths[1]):
+            self.poutput(args.Usuario)   
+            newPass=getpass.getpass("Introduzca una contraseña: ")
+            tempNewPass=getpass.getpass("Vuelva a introducir la contraseña para confirmar: ")
+            if newPass==tempNewPass:
+                cryptpass=crypt.crypt(newPass,crypt.mksalt(crypt.METHOD_SHA512))
+
+            else:
+                self.poutput("Las contraseñas no coinciden.")   
+        else:
+            self.poutput("El usuario no existe.")
+
+
+
+        
 
 if __name__ == '__main__':
     import sys
     c = FirstApp()
+    if not os.path.exists('/var/log/shell'):
+        os.system('mkdir /var/log/shell')
     sys.exit(c.cmdloop())
