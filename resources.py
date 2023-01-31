@@ -1,5 +1,7 @@
 import os
 from os import path
+import colorama
+from termcolor import colored
 
 def verificar_direccion(dir) -> bool:
     os.path.abspath(dir)
@@ -25,3 +27,7 @@ def check_string(str,arch) -> bool:
 def crearArchivos(path) -> None:
     if not os.path.exists(path):
         os.system('touch '+ path)
+
+def errorMessage(msg) -> None:
+    self.poutput(colored(msg,'red'))
+    logs.SystemError(msg)
