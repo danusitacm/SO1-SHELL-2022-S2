@@ -4,6 +4,7 @@ import cmd2
 import argparse
 import os
 import os.path
+import getpass
 from os import path
 import shutil
 from pathlib import Path
@@ -26,7 +27,7 @@ class FirstApp(cmd2.Cmd):
     delattr(cmd2.Cmd,'do_shell')
     delattr(cmd2.Cmd,'do_set')
     def __init__(self):
-        builtin_commands=['alias','edit','history','py','run_pyscript','run_script','shortcuts','macro']
+        builtin_commands=['alias','edit','py','run_pyscript','run_script','shortcuts','macro']
         super().__init__()
         self.hidden_commands.extend(builtin_commands) #Para esconder los Builtin Commands
     # parser copiar
@@ -168,7 +169,12 @@ class FirstApp(cmd2.Cmd):
                 os.chown(i,int(usuario[0]),int(usuario[1]))
             else:
                 self.poutput('Directorio no valido')
-            
+    #Parse de contraseña
+    contrasena_parser=argparse.ArgumentParser(description='Cambiar la contraseña de un usuario.')
+    contrasena_parser.add_argument('Usuario',nargs='?',default=getpass.getuser(),type=str,help='Usuario que desea cambiar la contraseña')
+    @cmd2.with_argparser(contrasena_parser)
+    def do_contrasena(self, args: argparse.Namespace) -> None:
+        self.poutput(args.Usuario)   
 
 if __name__ == '__main__':
     import sys
