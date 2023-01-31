@@ -106,12 +106,11 @@ class FirstApp(cmd2.Cmd):
             args.Directorio_Destino=os.getcwd()
             self.poutput(args.Directorio_Destino)
         try:
-            os.path.abspath(args.Directorio_Destino)
-            dirs = os.listdir(args.Directorio_Destino)
+            dirs = os.listdir(os.path.abspath(args.Directorio_Destino))
             for file in dirs:
                self.poutput(file)
         except Exception:
-            msg='listar: Directorio no valido.'
+            msg='listar: Directorio no valido. '+ os.path.abspath(args.Directorio_Destino)
             self.poutput(msg)
             logs.SystemError(msg)
     
@@ -181,14 +180,12 @@ class FirstApp(cmd2.Cmd):
                 self.poutput("Las contraseñas no coinciden.")   
         else:
             self.poutput("El usuario no existe.")
-
-
-
-        
-
+     
 if __name__ == '__main__':
     import sys
     c = FirstApp()
     if not os.path.exists('/var/log/shell'):
-        os.system('mkdir /var/log/shell')
+        #DANGER ZONE
+        os.system('sudo mkdir /var/log/shell')
+        os.system('sudo chmod -R 777  /var/log/shell')
     sys.exit(c.cmdloop())
