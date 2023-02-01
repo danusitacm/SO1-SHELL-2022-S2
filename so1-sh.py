@@ -220,6 +220,35 @@ class FirstApp(cmd2.Cmd):
             msg=f'contraseña: {error}'
             self.poutput(colored(msg,'red'))
             logs.SystemError(msg)
+    
+    #grep
+    grep_parser = argparse.ArgumentParser(description='Buscar un string en un archivo.')
+    grep_parser.add_argument('String', type=str,nargs=1,help = 'String a buscar')
+    grep_parser.add_argument('Archivo', type=str,nargs=1,help = 'Archivo en donde se busca')
+    @cmd2.with_argparser(grep_parser)
+    def do_grep(self, args: argparse.Namespace) -> None:
+        try:
+             for arch in args.Archivo:
+                if resources.verificar_archivo(arch):
+                    Lineas_encontradas = []
+                    path=os.path.abspath(arch)
+                    file = open(path,'r')
+                    numero_linea = 0
+                    for linea in file:
+                        numero_linea += 1
+                        linea = linea.rstrip()
+                        Lista_palabras = linea.split(" ")
+                        for Palabra in args.String:
+                            if Palabra in Lista_palabras:
+                                Lineas_encontradas.append(str(numero_linea) + " - " + linea)
+                    file.close
+                    for linea in Lineas_encontradas:
+                        self.poutput(linea)
+        except Exception as error:
+            msg=f'grep: {error}'
+            self.poutput(colored(msg,'red'))
+            logs.SystemError(msg)
+            
 if __name__ == '__main__':
     import sys
     c = FirstApp()
