@@ -22,84 +22,81 @@ class FirstApp(cmd2.Cmd):
         builtin_commands=['alias','edit','py','run_pyscript','run_script','shortcuts','macro','shell']
         super().__init__()
         self.hidden_commands.extend(builtin_commands) #Para esconder los Builtin Commands
-    # parser copiar
+    #COMANDOS BASICOS
+    #Copiar
     cop_parser = argparse.ArgumentParser(description='Copiar un archivo en un directorio determinado.')
     cop_parser.add_argument('Archivos', type=str ,nargs='+',help = 'Los archivos a utilizar')
-    cop_parser.add_argument('Directorio_Destino' , type=str, help = 'Directorio destino')
+    cop_parser.add_argument('Directorio_Destino', type=str, help = 'Directorio destino')
     @cmd2.with_argparser(cop_parser)
     def do_copiar(self, args: argparse.Namespace) -> None:
         try:
-            destino = os.path.abspath(args.Directorio_Destino)
-            self.poutput(destino)
-            
+            pathDestino = os.path.abspath(args.Directorio_Destino)
+            for arch in args.Archivos:
+                pathOrigen=os.path.abspath(arch)
+                if(resources.verificar_archivo(arch)):
+                    pathDestino = os.path.join(pathDestino,arch)
+                    fileDest = open(pathDestino, 'w')
+                    fileOrigen = open(pathOrigen,'r')
+                    shutil.copy(pathOrigen,pathDestino)
+                    fileOrigen.close()
+                    fileDest.close()
+                    self.poutput(f'Archivo {arch} copiado.')
+                else:
+                    self.poutput(f'No es un archivo: {arch}.') 
         except Exception as error:
             msg=f'copiar: {error}'
             self.poutput(colored(msg,'red'))
             logs.SystemError(msg)
-        #     
-        #     self.poutput(destino)
-        #     for i in range(len(args.Archivos)):
-        #         if(resources.verificar_archivo(args.Archivos[i])):
-        #             destino = os.path.join(destino,args.Archivos[i])
-        #             filedest = open(destino, 'w')
-        #             os.path.abspath(args.Archivos[i])
-        #             origen = open(args.Archivos[i],'r')
-        #             shutil.copy(args.Archivos[i],destino)
-        #             origen.close()
-        #             filedest.close()
-        #             self.poutput('archivo '+ args.Archivos[i] +' copiado')
-        #         else:
-        #             self.poutput('archivo no valido' + args.Archivos[i])   
-        #     destino.close()         
-        # else:
-        #     self.poutput('Directorio no valido')
-    
-    #Parse mover
+    #Mover
     mov_parser = argparse.ArgumentParser(description='Mover un archivo a un directorio determinado.')
-    mov_parser.add_argument('Archivos', type=str ,nargs='+',help = 'Los archivos a utilizar')
-    mov_parser.add_argument('Directorio_Destino' , type=str,nargs=1, help = 'Directorio destino')
+    mov_parser.add_argument('Archivos', type=str,nargs='+',help = 'Los archivos a utilizar')
+    mov_parser.add_argument('Directorio_Destino',type=str, help = 'Directorio destino')
     @cmd2.with_argparser(mov_parser)
     def do_mover(self, args: argparse.Namespace) -> None:
-        if resources.verificar_direccion(args.Directorio_Destino[0]):
-            destino = os.path.abspath(args.Directorio_Destino[0])
-            self.poutput(destino)
-            for i in range(len(args.Archivos)):
-                if(resources.verificar_archivo(args.Archivos[i])):
-                    destino = os.path.join(destino,args.Archivos[i])
-                    filedest = open(destino, 'w')
-                    os.path.abspath(args.Archivos[i])
-                    origen = open(args.Archivos[i],'r')
-                    shutil.copy(args.Archivos[i],destino)
-                    os.remove(args.Archivos[i])
-                    origen.close()
-                    filedest.close()
-                    self.poutput('archivo ' + args.Archivos[i] + ' movido')
+        try:
+            pathDestino = os.path.abspath(args.Directorio_Destino)
+            for arch in args.Archivos:
+                pathOrigen=os.path.abspath(arch)
+                if(resources.verificar_archivo(arch)):
+                    pathDestino = os.path.join(pathDestino,arch)
+                    fileDest = open(pathDestino, 'w')
+                    fileOrigen = open(pathOrigen,'r')
+                    shutil.copy(pathOrigen,pathDestino)
+                    os.remove(pathOrigen)
+                    fileOrigen.close()
+                    fileDest.close()
+                    self.poutput(f'Archivo {arch} movido.')
                 else:
-                    self.poutput('archivo no valido' + args.Archivos[i])   
-            destino.close()         
-        else:
-            self.poutput('Directorio no valido')
-    
-    #Parser renombrar
+                    self.poutput(f'No es un archivo: {arch}.') 
+        except Exception as error:
+            msg=f'mover: {error}'
+            self.poutput(colored(msg,'red'))
+            logs.SystemError(msg)        
+    #Renombrar
     renombrar_parser = argparse.ArgumentParser(description='Renombrar un archivo.')
-    renombrar_parser.add_argument('Archivo', type=str ,nargs='+',help = 'Los archivos a renombrar')
-    renombrar_parser.add_argument('Nuevo_nombre' ,type=str,nargs=1, help = 'Nuevo nombre del archivo')
+    renombrar_parser.add_argument('Archivoa', type=str,help = 'Archivo a renombrar.')
+    renombrar_parser.add_argument('Nuevo_nombre' ,type=str, help = 'Nuevo nombre del archivo.')
     @cmd2.with_argparser(renombrar_parser)
     def do_renombrar(self, args: argparse.Namespace) -> None:
-        if(resources.verificar_archivo(args.Archivo[0])):
-                    destino = os.path.join(os.getcwd(),args.Nuevo_nombre[0])
-                    filedest = open(destino, 'w')
-                    os.path.abspath(args.Archivo[0])
-                    origen = open(args.Archivo[0],'r')
-                    shutil.copy(args.Archivo[0],destino)
-                    os.remove(args.Archivo[0])
-                    origen.close()
-                    filedest.close()
-                    self.poutput('archivo renombrado')
-        else:
-            self.poutput('archivo no valido')         
+        try:
+            if(resources.verificar_archivo(args.Archivo)):
+                pathDestino = os.path.join(os.getcwd(),args.Nuevo_nombre)
+                pathOrigen=os.path.abspath(args.Archivo)
+                fileDest = open(pathDestino, 'w')
+                fileOrigen = open(pathOrigen,'r')
+                shutil.copy(pathOrigen,pathDestino)
+                os.remove(pathOrigen)
+                fileOrigen.close()
+                fileDest.close()
+                self.poutput(f'Archivo renombrado.')
+            else:
+                self.poutput(f'No es un archivo: {args.Archivo}.') 
+        except Exception as error:
+            msg=f'renombrar: {error}'
+            self.poutput(colored(msg,'red'))
+            logs.SystemError(msg)   
     
-    #Parse del pwd 
+    #Pwd 
     pwd_parser = argparse.ArgumentParser(description='Mostar el directorio actual de trabajo.')
     @cmd2.with_argparser(pwd_parser)
     def do_pwd(self, args: argparse.Namespace) -> None:
@@ -110,7 +107,7 @@ class FirstApp(cmd2.Cmd):
             self.poutput(msg)
             logs.SystemError(msg)
     
-    #Parse de listar
+    #listar
     listar_parser = argparse.ArgumentParser(description='Lista los archivos y directorios de un directorio determinado.')
     listar_parser.add_argument('Directorio_Destino',nargs='?',default='', type=str, help ='Directorio destino')
     @cmd2.with_argparser(listar_parser)
@@ -127,7 +124,7 @@ class FirstApp(cmd2.Cmd):
             self.poutput(colored(msg,'red'))
             logs.SystemError(msg)
     
-    #Parse de creardir
+    #creardir
     creardir_parser =argparse.ArgumentParser(description='Crear archivos.')
     creardir_parser.add_argument('Nombre_Archivo', type=str, nargs='*',help ='El nombre del archivo')
     @cmd2.with_argparser(creardir_parser)
@@ -140,7 +137,7 @@ class FirstApp(cmd2.Cmd):
                 self.poutput(colored(msg,'red'))
                 logs.SystemError(msg)   
 
-    #Parse de ir 
+    #ir 
     ir_parser=argparse.ArgumentParser(description='Cambiar el directorio de trabajo actual de un usuario.')
     ir_parser.add_argument('Directorio_Destino',nargs='?', default='/', type=str, help ='Directorio destino')
     @cmd2.with_argparser(ir_parser)
@@ -151,7 +148,7 @@ class FirstApp(cmd2.Cmd):
             msg=f'ir: {error}'
             self.poutput(colored(msg,'red'))
             logs.SystemError(msg)
-    #Parse de permisos
+    #permisos
     permiso_parser=argparse.ArgumentParser(description='Cambiar los permisos sobre un archivo o un directorio.')
     permiso_parser.add_argument('Permisos',type=str)
     permiso_parser.add_argument('Path',type=str)
@@ -164,8 +161,7 @@ class FirstApp(cmd2.Cmd):
             msg=f'permiso: {error}'
             self.poutput(colored(msg,'red'))
             logs.SystemError(msg)
-            
-    #Parse de propietario
+    #propietario
     propietario_parser=argparse.ArgumentParser(description='Cambiar los propietarios sobre un archivo o un conjunto de archivos.')
     propietario_parser.add_argument('UsuarioID',type=str,help='USUARIOID:[GRUPOID]')
     propietario_parser.add_argument('Archivos',nargs='*',type=str)
@@ -176,11 +172,10 @@ class FirstApp(cmd2.Cmd):
             for i in args.Archivos:
                 os.chown(os.path.abspath(i),int(usuario[0]),int(usuario[1]))
         except Exception as error:
-            msg=f'permiso: {error}'
+            msg=f'propietario: {error}'
             self.poutput(colored(msg,'red'))
             logs.SystemError(msg)
-    
-    #Parse de contraseña
+    #contraseña
     contrasena_parser=argparse.ArgumentParser(description='Cambiar la contraseña de un usuario.')
     contrasena_parser.add_argument('Usuario',nargs='?',default=getpass.getuser(),type=str,help='Usuario que desea cambiar la contraseña')
     @cmd2.with_argparser(contrasena_parser)
