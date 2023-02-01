@@ -95,7 +95,6 @@ class FirstApp(cmd2.Cmd):
             msg=f'renombrar: {error}'
             self.poutput(colored(msg,'red'))
             logs.SystemError(msg)   
-    
     #Pwd 
     pwd_parser = argparse.ArgumentParser(description='Mostar el directorio actual de trabajo.')
     @cmd2.with_argparser(pwd_parser)
@@ -180,19 +179,19 @@ class FirstApp(cmd2.Cmd):
     contrasena_parser.add_argument('Usuario',nargs='?',default=getpass.getuser(),type=str,help='Usuario que desea cambiar la contraseña')
     @cmd2.with_argparser(contrasena_parser)
     def do_contrasena(self, args: argparse.Namespace) -> None:
-        paths=["/etc/shadow","/etc/passwd"]
-        if resources.check_string(args.Usuario,paths[1]):
-            self.poutput(args.Usuario)   
+        try:
+            paths=["/etc/shadow","/etc/passwd"]   
             newPass=getpass.getpass("Introduzca una contraseña: ")
             tempNewPass=getpass.getpass("Vuelva a introducir la contraseña para confirmar: ")
             if newPass==tempNewPass:
                 cryptpass=crypt.crypt(newPass,crypt.mksalt(crypt.METHOD_SHA512))
-
+                
             else:
-                self.poutput("Las contraseñas no coinciden.")   
-        else:
-            self.poutput("El usuario no existe.")
-     
+                self.poutput("Las contraseñas no coinciden.")
+        except Exception as error:
+            msg=f'contraseña: {error}'
+            self.poutput(colored(msg,'red'))
+            logs.SystemError(msg)
 if __name__ == '__main__':
     import sys
     c = FirstApp()

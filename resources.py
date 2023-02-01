@@ -23,5 +23,6 @@ def check_string(str,arch) -> bool:
     return False
 
 def crearArchivos(path) -> None:
-    if not os.path.exists(path):
-        os.system('touch '+ path)
+    for i in path:
+        if not os.path.exists(i):
+            os.system('touch '+ path)
