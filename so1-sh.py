@@ -117,6 +117,7 @@ class FirstApp(cmd2.Cmd):
             f=open('/var/log/shell/comando.log','r')
             for linea in f:
                 self.poutput(linea)
+            f.close()
         except Exception as error:
             msg=f'history: {error}'
             self.poutput(msg)
