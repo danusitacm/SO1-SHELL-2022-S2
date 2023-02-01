@@ -74,7 +74,7 @@ class FirstApp(cmd2.Cmd):
             logs.SystemError(msg)        
     #Renombrar
     renombrar_parser = argparse.ArgumentParser(description='Renombrar un archivo.')
-    renombrar_parser.add_argument('Archivoa', type=str,help = 'Archivo a renombrar.')
+    renombrar_parser.add_argument('Archivos', type=str,help = 'Archivo a renombrar.')
     renombrar_parser.add_argument('Nuevo_nombre' ,type=str, help = 'Nuevo nombre del archivo.')
     @cmd2.with_argparser(renombrar_parser)
     def do_renombrar(self, args: argparse.Namespace) -> None:
@@ -135,7 +135,6 @@ class FirstApp(cmd2.Cmd):
                 msg=f'creardir: {error}'
                 self.poutput(colored(msg,'red'))
                 logs.SystemError(msg)   
-
     #ir 
     ir_parser=argparse.ArgumentParser(description='Cambiar el directorio de trabajo actual de un usuario.')
     ir_parser.add_argument('Directorio_Destino',nargs='?', default='/', type=str, help ='Directorio destino')
@@ -145,6 +144,20 @@ class FirstApp(cmd2.Cmd):
             os.chdir(os.path.abspath(args.Directorio_Destino))
         except Exception as error:
             msg=f'ir: {error}'
+            self.poutput(colored(msg,'red'))
+            logs.SystemError(msg)
+    #kill
+    kill_parser=argparse.ArgumentParser(description='Terminar procesos.')
+    kill_parser.add_argument('Sigkill',default='9', type=int,help ='Señales para enviar a los procesos.')
+    kill_parser.add_argument('PID',type=int,help='ID del proceso')
+    @cmd2.with_argparser(kill_parser)
+    def do_kill(self, args: argparse.Namespace) -> None:
+        try:
+            os.kill(args.PID,args.Sigkill)
+            msg=f'kill: Se mato al proceso de PID:  {args.PID}'
+            self.poutput(colored(msg,'green'))
+        except Exception as error:
+            msg=f'kill: {error}'
             self.poutput(colored(msg,'red'))
             logs.SystemError(msg)
     #permisos
