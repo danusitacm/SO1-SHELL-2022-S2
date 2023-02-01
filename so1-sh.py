@@ -19,9 +19,14 @@ class FirstApp(cmd2.Cmd):
     """A simple cmd2 application."""
     delattr(cmd2.Cmd,'do_set')
     def __init__(self):
-        builtin_commands=['alias','edit','py','run_pyscript','run_script','shortcuts','macro','shell']
         super().__init__()
-        self.hidden_commands.extend(builtin_commands) #Para esconder los Builtin Commands
+        builtin_commands=['alias','edit','py','run_pyscript','run_script','shortcuts','macro','shell']
+        self.hidden_commands.extend(builtin_commands) #Para esconder los Builtin Commands  
+    def onecmd(self, s,**kwargs):
+        print(s.raw)
+        comando=s.raw
+        logs.regComandos(comando)
+        return cmd2.Cmd.onecmd(self,s,**kwargs)    
     #COMANDOS BASICOS
     #Copiar
     cop_parser = argparse.ArgumentParser(description='Copiar un archivo en un directorio determinado.')
@@ -105,7 +110,17 @@ class FirstApp(cmd2.Cmd):
             msg=f'pwd: {error}'
             self.poutput(msg)
             logs.SystemError(msg)
-    
+    history_parser = argparse.ArgumentParser(description='Mostar el directorio actual de trabajo.')
+    @cmd2.with_argparser(history_parser)
+    def do_history(self, args: argparse.Namespace) -> None:
+        try:
+            f=open('/var/log/shell/comando.log','r')
+            for linea in f:
+                self.poutput(linea)
+        except Exception as error:
+            msg=f'history: {error}'
+            self.poutput(msg)
+            logs.SystemError(msg)
     #listar
     listar_parser = argparse.ArgumentParser(description='Lista los archivos y directorios de un directorio determinado.')
     listar_parser.add_argument('Directorio_Destino',nargs='?',default='', type=str, help ='Directorio destino')
@@ -197,8 +212,7 @@ class FirstApp(cmd2.Cmd):
             newPass=getpass.getpass("Introduzca una contraseña: ")
             tempNewPass=getpass.getpass("Vuelva a introducir la contraseña para confirmar: ")
             if newPass==tempNewPass:
-                cryptpass=crypt.crypt(newPass,crypt.mksalt(crypt.METHOD_SHA512))
-                
+                cryptpass=crypt.crypt(newPass,crypt.mksalt(crypt.METHOD_SHA512))   
             else:
                 self.poutput("Las contraseñas no coinciden.")
         except Exception as error:
