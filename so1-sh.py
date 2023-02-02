@@ -12,8 +12,6 @@ import logs
 from os import path
 import shutil
 from pathlib import Path
-import colorama
-from termcolor import colored
 
 class FirstApp(cmd2.Cmd):
     """A simple cmd2 application."""
@@ -38,19 +36,16 @@ class FirstApp(cmd2.Cmd):
             pathDestino = os.path.abspath(args.Directorio_Destino)
             for arch in args.Archivos:
                 pathOrigen=os.path.abspath(arch)
-                if(resources.verificar_archivo(arch)):
-                    pathDestino = os.path.join(pathDestino,arch)
-                    fileDest = open(pathDestino, 'w')
-                    fileOrigen = open(pathOrigen,'r')
-                    shutil.copy(pathOrigen,pathDestino)
-                    fileOrigen.close()
-                    fileDest.close()
-                    self.poutput(f'Archivo {arch} copiado.')
-                else:
-                    self.poutput(f'No es un archivo: {arch}.') 
+                pathDestino = os.path.join(pathDestino,arch)
+                fileDest = open(pathDestino, 'w')
+                fileOrigen = open(pathOrigen,'r')
+                shutil.copy(pathOrigen,pathDestino)
+                fileOrigen.close()
+                fileDest.close()
+                self.poutput(f'Archivo {arch} copiado.')   
         except Exception as error:
             msg=f'copiar: {error}'
-            self.poutput(colored(msg,'red'))
+            self.perror(msg)
             logs.SystemError(msg)
     #Mover
     mov_parser = argparse.ArgumentParser(description='Mover un archivo a un directorio determinado.')
@@ -62,20 +57,17 @@ class FirstApp(cmd2.Cmd):
             pathDestino = os.path.abspath(args.Directorio_Destino)
             for arch in args.Archivos:
                 pathOrigen=os.path.abspath(arch)
-                if(resources.verificar_archivo(arch)):
-                    pathDestino = os.path.join(pathDestino,arch)
-                    fileDest = open(pathDestino, 'w')
-                    fileOrigen = open(pathOrigen,'r')
-                    shutil.copy(pathOrigen,pathDestino)
-                    os.remove(pathOrigen)
-                    fileOrigen.close()
-                    fileDest.close()
-                    self.poutput(f'Archivo {arch} movido.')
-                else:
-                    self.poutput(f'No es un archivo: {arch}.') 
+                pathDestino = os.path.join(pathDestino,arch)
+                fileDest = open(pathDestino, 'w')
+                fileOrigen = open(pathOrigen,'r')
+                shutil.copy(pathOrigen,pathDestino)
+                os.remove(pathOrigen)
+                fileOrigen.close()
+                fileDest.close()
+                self.poutput(f'Archivo {arch} movido.')
         except Exception as error:
             msg=f'mover: {error}'
-            self.poutput(colored(msg,'red'))
+            self.perror(msg)
             logs.SystemError(msg)        
     #Renombrar
     renombrar_parser = argparse.ArgumentParser(description='Renombrar un archivo.')
@@ -84,21 +76,18 @@ class FirstApp(cmd2.Cmd):
     @cmd2.with_argparser(renombrar_parser)
     def do_renombrar(self, args: argparse.Namespace) -> None:
         try:
-            if(resources.verificar_archivo(args.Archivo)):
-                pathDestino = os.path.join(os.getcwd(),args.Nuevo_nombre)
-                pathOrigen=os.path.abspath(args.Archivo)
-                fileDest = open(pathDestino, 'w')
-                fileOrigen = open(pathOrigen,'r')
-                shutil.copy(pathOrigen,pathDestino)
-                os.remove(pathOrigen)
-                fileOrigen.close()
-                fileDest.close()
-                self.poutput(f'Archivo renombrado.')
-            else:
-                self.poutput(f'No es un archivo: {args.Archivo}.') 
+            pathDestino = os.path.join(os.getcwd(),args.Nuevo_nombre)
+            pathOrigen=os.path.abspath(args.Archivo)
+            fileDest = open(pathDestino, 'w')
+            fileOrigen = open(pathOrigen,'r')
+            shutil.copy(pathOrigen,pathDestino)
+            os.remove(pathOrigen)
+            fileOrigen.close()
+            fileDest.close()
+            self.poutput(f'Archivo renombrado.')
         except Exception as error:
             msg=f'renombrar: {error}'
-            self.poutput(colored(msg,'red'))
+            self.perror(msg)
             logs.SystemError(msg)   
     #Pwd 
     pwd_parser = argparse.ArgumentParser(description='Mostar el directorio actual de trabajo.')
@@ -108,19 +97,18 @@ class FirstApp(cmd2.Cmd):
             self.poutput(os.path.abspath(os.getcwd()))
         except Exception as error:
             msg=f'pwd: {error}'
-            self.poutput(msg)
+            self.perror(msg)
             logs.SystemError(msg)
     history_parser = argparse.ArgumentParser(description='Mostar el directorio actual de trabajo.')
     @cmd2.with_argparser(history_parser)
     def do_history(self, args: argparse.Namespace) -> None:
         try:
-            f=open('/var/log/shell/comando.log','r')
-            for linea in f:
-                self.poutput(linea)
-            f.close()
+            with open('/var/log/shell/comando.log','r') as temp_f:
+                for linea in temp_f:
+                    self.poutput(linea)
         except Exception as error:
             msg=f'history: {error}'
-            self.poutput(msg)
+            self.perror(msg)
             logs.SystemError(msg)
     #listar
     listar_parser = argparse.ArgumentParser(description='Lista los archivos y directorios de un directorio determinado.')
@@ -136,7 +124,7 @@ class FirstApp(cmd2.Cmd):
                self.poutput(file)
         except Exception as error:
             msg=f'listar: {error}'
-            self.poutput(colored(msg,'red'))
+            self.perror(msg)
             logs.SystemError(msg)
     
     #creardir
@@ -149,7 +137,7 @@ class FirstApp(cmd2.Cmd):
                 os.mkdir(arch)
             except Exception  as error:
                 msg=f'creardir: {error}'
-                self.poutput(colored(msg,'red'))
+                self.perror(msg)
                 logs.SystemError(msg)   
     #ir 
     ir_parser=argparse.ArgumentParser(description='Cambiar el directorio de trabajo actual de un usuario.')
@@ -160,7 +148,7 @@ class FirstApp(cmd2.Cmd):
             os.chdir(os.path.abspath(args.Directorio_Destino))
         except Exception as error:
             msg=f'ir: {error}'
-            self.poutput(colored(msg,'red'))
+            self.perror(msg)
             logs.SystemError(msg)
     #kill
     kill_parser=argparse.ArgumentParser(description='Terminar procesos.')
@@ -174,7 +162,7 @@ class FirstApp(cmd2.Cmd):
             self.poutput(colored(msg,'green'))
         except Exception as error:
             msg=f'kill: {error}'
-            self.poutput(colored(msg,'red'))
+            self.perror(msg)
             logs.SystemError(msg)
     #permisos
     permiso_parser=argparse.ArgumentParser(description='Cambiar los permisos sobre un archivo o un directorio.')
@@ -187,7 +175,7 @@ class FirstApp(cmd2.Cmd):
             os.chmod(args.Path, int(args.Permisos,8))
         except Exception as error:
             msg=f'permiso: {error}'
-            self.poutput(colored(msg,'red'))
+            self.perror(msg)
             logs.SystemError(msg)
     #propietario
     propietario_parser=argparse.ArgumentParser(description='Cambiar los propietarios sobre un archivo o un conjunto de archivos.')
@@ -201,7 +189,7 @@ class FirstApp(cmd2.Cmd):
                 os.chown(os.path.abspath(i),int(usuario[0]),int(usuario[1]))
         except Exception as error:
             msg=f'propietario: {error}'
-            self.poutput(colored(msg,'red'))
+            self.perror(msg)
             logs.SystemError(msg)
      #contraseña
     contrasena_parser=argparse.ArgumentParser(description='Cambiar la contraseña de un usuario.')
@@ -219,14 +207,12 @@ class FirstApp(cmd2.Cmd):
                 resources.guardarFilaUsuario(args.Usuario,"/etc/shadow",resources.unirArray(usuShadow,':'))
                 self.poutput("Se cambio la contraseña, exitosamente!!")
             else:
-                self.poutput("Las contraseñas no coinciden.")
+                msg=f'contraseña: las contraseñas no coinciden'
         except Exception as error:
             msg=f'contraseña: {error}'
-            self.poutput(colored(msg,'red'))
+        finally:
+            self.perror(msg)
             logs.SystemError(msg)
-
-
-    
     #grep
     grep_parser = argparse.ArgumentParser(description='Buscar un string en un archivo.')
     grep_parser.add_argument('String', type=str,nargs=1,help = 'String a buscar')
@@ -235,24 +221,23 @@ class FirstApp(cmd2.Cmd):
     def do_grep(self, args: argparse.Namespace) -> None:
         try:
              for arch in args.Archivo:
-                if resources.verificar_archivo(arch):
-                    Lineas_encontradas = []
-                    path=os.path.abspath(arch)
-                    file = open(path,'r')
-                    numero_linea = 0
-                    for linea in file:
-                        numero_linea += 1
-                        linea = linea.rstrip()
-                        Lista_palabras = linea.split(" ")
-                        for Palabra in args.String:
-                            if Palabra in Lista_palabras:
-                                Lineas_encontradas.append(str(numero_linea) + " - " + linea)
+                Lineas_encontradas = []
+                path=os.path.abspath(arch)
+                file = open(path,'r')
+                numero_linea = 0
+                for linea in file:
+                    numero_linea += 1
+                    linea = linea.rstrip()
+                    Lista_palabras = linea.split(" ")
+                    for Palabra in args.String:
+                        if Palabra in Lista_palabras:
+                            Lineas_encontradas.append(str(numero_linea) + " - " + linea)
                     file.close
-                    for linea in Lineas_encontradas:
-                        self.poutput(linea)
+                for linea in Lineas_encontradas:
+                    self.poutput(linea)
         except Exception as error:
             msg=f'grep: {error}'
-            self.poutput(colored(msg,'red'))
+            self.perror(msg)
             logs.SystemError(msg)
             
 if __name__ == '__main__':
