@@ -23,7 +23,7 @@ class FirstApp(cmd2.Cmd):
     def onecmd(self, s,**kwargs):
         print(s.raw)
         comando=s.raw
-        logs.regComandos(comando)
+        logs.RegComandos(comando)
         return cmd2.Cmd.onecmd(self,s,**kwargs)    
     #COMANDOS BASICOS
     #Copiar
@@ -159,7 +159,7 @@ class FirstApp(cmd2.Cmd):
         try:
             os.kill(args.PID,args.Sigkill)
             msg=f'kill: Se mato al proceso de PID:  {args.PID}'
-            self.poutput(colored(msg,'green'))
+            self.poutput(msg,'green'))
         except Exception as error:
             msg=f'kill: {error}'
             self.perror(msg)

@@ -20,7 +20,7 @@ def SystemError(message):
     except:
         log.fatal("Error, no se pudo acceder al archivo sistema_error.log")
 #No pude implementar todavia
-def regComandos(message):
+def RegComandos(message):
     __path__= '/var/log/shell/comando.log'
     resources.crearArchivos(__path__)
     try:
