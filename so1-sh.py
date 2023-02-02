@@ -289,6 +289,27 @@ class FirstApp(cmd2.Cmd):
             self.perror(msg)
             logs.SystemError(msg)
             logs.Transferencias(msg,'ERROR')
+    #Demonio
+    demonio_parser =argparse.ArgumentParser(description='Manipulacion de demonios del sistema.')
+    demonio_parser.add_argument('Accion',type=str,choices=['levantar','apagar','listar'],help='La accion que se desea realizar con los demonios.')
+    demonio_parser.add_argument('Nombre',type=str,default=' ',nargs='?',help='Nombre del demonio')
+    @cmd2.with_argparser(propietario_parser)
+    def do_propietario(self, args: argparse.Namespace) -> None:
+        try:
+            if(os.getuid==0):
+                if args.Accion=='levantar':
+                    print('l')   
+                elif args.Accion=='apagar':
+                    print('a')
+                elif args.Accion=='listar':
+                    print('l2')
+            else:
+                    msg=f'demonio: El usuario no tiene los permisos suficientes.'
+        except Exception as error:
+            msg=f'propietario: {error}'
+            self.perror(msg)
+            logs.SystemError(msg)
+     #contraseña
 if __name__ == '__main__':
     import sys
     c = FirstApp()
