@@ -9,6 +9,7 @@ import getpass
 import crypt
 import hashlib
 import logs
+from ftplib import FTP
 from os import path
 import shutil
 from pathlib import Path
@@ -73,7 +74,7 @@ class FirstApp(cmd2.Cmd):
     renombrar_parser.add_argument('Archivos', type=str,help = 'Archivo a renombrar.')
     renombrar_parser.add_argument('Nuevo_nombre' ,type=str, help = 'Nuevo nombre del archivo.')
     @cmd2.with_argparser(renombrar_parser)
-    def do_renombrar(self, arg1s: argparse.Namespace) -> None:
+    def do_renombrar(self, args: argparse.Namespace) -> None:
         try:
             pathDestino = os.path.join(os.getcwd(),args.Nuevo_nombre)
             pathOrigen=os.path.abspath(args.Archivo)
@@ -197,7 +198,7 @@ class FirstApp(cmd2.Cmd):
     def do_contrasena(self, args: argparse.Namespace) -> None:
         try:
             if(os.getuid==0):
-                if(check_string(args.Usuario,"etc/passwd")):
+                if(resources.check_string(args.Usuario,"etc/passwd")):
                     newPass=getpass.getpass("Introduzca una contraseña: ")
                     tempNewPass=getpass.getpass("Vuelva a introducir la contraseña para confirmar: ")
                     if newPass==tempNewPass:
@@ -244,7 +245,50 @@ class FirstApp(cmd2.Cmd):
             msg=f'grep: {error}'
             self.perror(msg)
             logs.SystemError(msg)
-            
+    #ftp
+    ftp_parser = argparse.ArgumentParser(description='Transferencia por FTP.')
+    ftp_parser.add_argument('Accion',type=str,choices=['subir','descargar','listar','eliminar'],help='La accion que se desea realizar en el servidor.')
+    ftp_parser.add_argument('Archivo',type=str,default=' ',nargs='?',help='Archivo que se desea subir')
+    @cmd2.with_argparser(ftp_parser)
+    def do_ftp(self, args: argparse.Namespace) -> None:
+        try:
+            # ftpHostname=input("Ingrese el host: ")
+            # ftpUser=input("Ingrese el nombre de usuario: ")
+            # ftpPasswd=getpass.getpass()
+            ftpHostname='ftp.dlptest.com'
+            ftpUser='dlpuser'
+            ftpPasswd='rNrKYTX9g7z3RgJRmxWuGHbeu'
+            with FTP(ftpHostname) as ftp:            
+                ftpMsg=ftp.login(ftpUser,ftpPasswd)
+                self.poutput(ftpMsg)
+                logs.Transferencias(ftpMsg,'INFO')
+                if args.Accion=='subir':
+                    with open(args.Archivo,'rb') as file:
+                        ftpMsg=ftp.storbinary(f'STOR {args.Archivo}',file)
+                    self.poutput(f'ftp: {ftpMsg}')
+                    logs.Transferencias(f'{ftpMsg} File: {args.Archivo}','INFO')
+                    self.poutput(ftp.dir())
+                elif args.Accion=='descargar':
+                    with open(args.Archivo,'wb') as file:
+                        ftpMsg=ftp.retrbinary(f'RETR {args.Archivo}',file.write)
+                    logs.Transferencias(f'{ftpMsg} File: {args.Archivo}','INFO')
+                    self.poutput(f'ftp: {ftpMsg}')
+                    self.poutput('Archivo descargado:')
+                    resources.leerArch(args.Archivo)
+                elif args.Accion=='listar':
+                    self.poutput(ftp.dir())
+                    ftpMsg='Se listo correctamente los archivos.'
+                    self.poutput(f'ftp: {ftpMsg}')
+                    logs.Transferencias(f'{ftpMsg}','INFO')
+                elif args.Accion=='eliminar':
+                    ftpMsg=ftp.delete(args.Archivo)
+                    self.poutput(f'ftp: {ftpMsg}')
+                    logs.Transferencias(f'{ftpMsg} File: {args.Archivo}','INFO')
+        except Exception as error:
+            msg=f'ftp: {error}'
+            self.perror(msg)
+            logs.SystemError(msg)
+            logs.Transferencias(msg,'ERROR')
 if __name__ == '__main__':
     import sys
     c = FirstApp()

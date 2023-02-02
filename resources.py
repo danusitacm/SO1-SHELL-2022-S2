@@ -1,6 +1,6 @@
 import os
 from os import path
-
+import cmd2
 def verificar_direccion(dir) -> bool:
     os.path.abspath(dir)
     if path.isdir(dir):
@@ -50,3 +50,8 @@ def crearArchivos(path) -> None:
     for i in path:
         if not os.path.exists(i):
             os.system('touch '+ path)
+def leerArch(arch):
+    with open(arch,'r') as tem_f:
+        datafile=tem_f.readlines() #se almacena lo que esta el archivo en datafile como un list por cada linea 
+    for line in datafile:
+        print(line)
