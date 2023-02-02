@@ -105,8 +105,8 @@ class FirstApp(cmd2.Cmd):
         try:
             temp_f=open('/var/log/shell/comando.log','r')
             for line in temp_f:
-                temp_line=line.split(' ',3)
-                self.poutput(temp_line[3].rstrip('\n'))
+                temp_line=line.split(' ',5)
+                self.poutput(temp_line[5].rstrip('\n'))
         except Exception as error:
             msg=f'history: {error}'
             self.perror(msg)

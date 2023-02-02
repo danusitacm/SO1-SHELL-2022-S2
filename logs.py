@@ -23,11 +23,11 @@ def RegComandos(message):
     __path__= '/var/log/shell/comando.log'
     resources.crearArchivos(__path__)
     try:
-        log=logging.getLogger()
+        log=logging.getLogger(getpass.getuser())
         log.setLevel(logging.DEBUG)
         file=logging.FileHandler(__path__)
         file.setLevel(logging.DEBUG)
-        formato=logging.Formatter('%(asctime)s - %(message)s')
+        formato=logging.Formatter('%(asctime)s - %(name)s - %(message)s')
         file.setFormatter(formato)
         log.addHandler(file)
         log.debug(message)
