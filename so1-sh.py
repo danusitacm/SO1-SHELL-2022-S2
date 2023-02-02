@@ -203,23 +203,29 @@ class FirstApp(cmd2.Cmd):
             msg=f'propietario: {error}'
             self.poutput(colored(msg,'red'))
             logs.SystemError(msg)
-    #contraseña
+     #contraseña
     contrasena_parser=argparse.ArgumentParser(description='Cambiar la contraseña de un usuario.')
     contrasena_parser.add_argument('Usuario',nargs='?',default=getpass.getuser(),type=str,help='Usuario que desea cambiar la contraseña')
     @cmd2.with_argparser(contrasena_parser)
     def do_contrasena(self, args: argparse.Namespace) -> None:
-        try:
-            paths=["/etc/shadow","/etc/passwd"]   
+        try:   
             newPass=getpass.getpass("Introduzca una contraseña: ")
             tempNewPass=getpass.getpass("Vuelva a introducir la contraseña para confirmar: ")
             if newPass==tempNewPass:
-                cryptpass=crypt.crypt(newPass,crypt.mksalt(crypt.METHOD_SHA512))   
+                cryptpass=crypt.crypt(newPass,crypt.mksalt(crypt.METHOD_SHA512)) 
+                usuShadow=resources.obtenerFilaUsuario(args.Usuario,"/etc/shadow",':',3)
+                usuShadow.pop(1)
+                usuShadow.insert(1,cryptpass)
+                resources.guardarFilaUsuario(args.Usuario,"/etc/shadow",resources.unirArray(usuShadow,':'))
+                self.poutput("Se cambio la contraseña, exitosamente!!")
             else:
                 self.poutput("Las contraseñas no coinciden.")
         except Exception as error:
             msg=f'contraseña: {error}'
             self.poutput(colored(msg,'red'))
             logs.SystemError(msg)
+
+
     
     #grep
     grep_parser = argparse.ArgumentParser(description='Buscar un string en un archivo.')
