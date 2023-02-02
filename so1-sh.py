@@ -21,7 +21,6 @@ class FirstApp(cmd2.Cmd):
         builtin_commands=['alias','edit','py','run_pyscript','run_script','shortcuts','macro','shell']
         self.hidden_commands.extend(builtin_commands) #Para esconder los Builtin Commands  
     def onecmd(self, s,**kwargs):
-        print(s.raw)
         comando=s.raw
         logs.RegComandos(comando)
         return cmd2.Cmd.onecmd(self,s,**kwargs)    
@@ -74,7 +73,7 @@ class FirstApp(cmd2.Cmd):
     renombrar_parser.add_argument('Archivos', type=str,help = 'Archivo a renombrar.')
     renombrar_parser.add_argument('Nuevo_nombre' ,type=str, help = 'Nuevo nombre del archivo.')
     @cmd2.with_argparser(renombrar_parser)
-    def do_renombrar(self, args: argparse.Namespace) -> None:
+    def do_renombrar(self, arg1s: argparse.Namespace) -> None:
         try:
             pathDestino = os.path.join(os.getcwd(),args.Nuevo_nombre)
             pathOrigen=os.path.abspath(args.Archivo)
@@ -103,9 +102,10 @@ class FirstApp(cmd2.Cmd):
     @cmd2.with_argparser(history_parser)
     def do_history(self, args: argparse.Namespace) -> None:
         try:
-            with open('/var/log/shell/comando.log','r') as temp_f:
-                for linea in temp_f:
-                    self.poutput(linea)
+            temp_f=open('/var/log/shell/comando.log','r')
+            for line in temp_f:
+                temp_line=line.split(' ',3)
+                self.poutput(temp_line[3].rstrip('\n'))
         except Exception as error:
             msg=f'history: {error}'
             self.perror(msg)
@@ -117,7 +117,6 @@ class FirstApp(cmd2.Cmd):
     def do_listar(self, args: argparse.Namespace) -> None:
         if(args.Directorio_Destino==''):
             args.Directorio_Destino=os.getcwd()
-            self.poutput(args.Directorio_Destino)
         try:
             dirs = os.listdir(os.path.abspath(args.Directorio_Destino))
             for file in dirs:
@@ -159,7 +158,7 @@ class FirstApp(cmd2.Cmd):
         try:
             os.kill(args.PID,args.Sigkill)
             msg=f'kill: Se mato al proceso de PID:  {args.PID}'
-            self.poutput(msg,'green'))
+            self.poutput(msg)
         except Exception as error:
             msg=f'kill: {error}'
             self.perror(msg)
@@ -196,18 +195,24 @@ class FirstApp(cmd2.Cmd):
     contrasena_parser.add_argument('Usuario',nargs='?',default=getpass.getuser(),type=str,help='Usuario que desea cambiar la contraseña')
     @cmd2.with_argparser(contrasena_parser)
     def do_contrasena(self, args: argparse.Namespace) -> None:
-        try:   
-            newPass=getpass.getpass("Introduzca una contraseña: ")
-            tempNewPass=getpass.getpass("Vuelva a introducir la contraseña para confirmar: ")
-            if newPass==tempNewPass:
-                cryptpass=crypt.crypt(newPass,crypt.mksalt(crypt.METHOD_SHA512)) 
-                usuShadow=resources.obtenerFilaUsuario(args.Usuario,"/etc/shadow",':',3)
-                usuShadow.pop(1)
-                usuShadow.insert(1,cryptpass)
-                resources.guardarFilaUsuario(args.Usuario,"/etc/shadow",resources.unirArray(usuShadow,':'))
-                self.poutput("Se cambio la contraseña, exitosamente!!")
+        try:
+            if(os.getuid==0):
+                if(check_string(args.Usuario,"etc/passwd")):
+                    newPass=getpass.getpass("Introduzca una contraseña: ")
+                    tempNewPass=getpass.getpass("Vuelva a introducir la contraseña para confirmar: ")
+                    if newPass==tempNewPass:
+                        cryptpass=crypt.crypt(newPass,crypt.mksalt(crypt.METHOD_SHA512)) 
+                        usuShadow=resources.obtenerFilaUsuario(args.Usuario,"/etc/shadow",':',3)
+                        usuShadow.pop(1)
+                        usuShadow.insert(1,cryptpass)
+                        resources.guardarFilaUsuario(args.Usuario,"/etc/shadow",resources.unirArray(usuShadow,':'))
+                        self.poutput("Se cambio la contraseña, exitosamente!!")
+                    else:
+                        msg=f'contraseña: Las contraseñas no coinciden.'
+                else:
+                    msg=f'contraseña: El usuario {args.Usuario} no existe.'
             else:
-                msg=f'contraseña: las contraseñas no coinciden'
+                msg=f'contraseña: No tiene los permisos suficientes. Solo el usuario root puede modificar contraseñas.'
         except Exception as error:
             msg=f'contraseña: {error}'
         finally:
@@ -243,7 +248,6 @@ class FirstApp(cmd2.Cmd):
 if __name__ == '__main__':
     import sys
     c = FirstApp()
-    colorama.init(autoreset=True)
     if not os.path.exists('/var/log/shell'):
         #DANGER ZONE
         os.system('sudo mkdir /var/log/shell')

@@ -39,7 +39,7 @@ def unirArray(array,separador):
     return separador.join(array)
 
 def check_string(str,arch) -> bool:
-    with open(arch,"r+") as temp_f:
+    with open(arch,"r") as temp_f:
         datafile=temp_f.readlines()
     for line in datafile:
         if str in line:
