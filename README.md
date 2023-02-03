@@ -53,10 +53,32 @@ Cuando reinicie el sistema LFS vera algo como esto
 ```
 ## Comandos
 ### Copiar
-Copia un archivo o varios archivos en un directorio especificado por el usuario
+Copia un archivo o varios archivos en un directorio especificado por el usuario.
 ```
-copiar [-h] Archivos [Archivos ...] Directorio_Destino
+copiar [-h] Archivo [Archivo ...] Directorio_Destino
 ```
 #### Argumentos
-- Archivos              -> Los archivos que se desean copiar
-- Directorio_Destino    -> Direccion donde se copiaran los archivos
+|Argumentos|Descripcion|Opcional|
+|:---:|:---:|:---:|
+|`Archivo`|El archivo que se desea copiar|No|
+|`Directorio_destino`| Direccion donde se copiaran los archivos|No|
+### Mover
+Mueve un archivo o varios archivos en un directorio especificado por el usuario.
+```
+mover [-h] Archivo [Archivo ...] Directorio_Destino
+```
+#### Argumentos
+|Argumentos|Descripcion|Opcional|
+|:---:|:---:|:---:|
+|`Archivo`|El archivo que se desea mover|No|
+|`Directorio_Destino`| Direccion donde se moveran los archivos|No|
+### Renombrar 
+Cambia el nombre de un archivo.
+```
+renombrar [-h] Archivo Nuevo_Nombre
+```
+#### Argumentos
+|Argumentos|Descripcion|Opcional|
+|:---:|:---:|:---:|
+|`Archivo`|El archivo que se desea renombrar o ruta del archivo|No|
+|`Nuevo_Nombre`| El nuevo nombre del archivo|No|
