@@ -1,7 +1,7 @@
 # SO1-SHELL-2022-S2
 ## Integrantes 
 - Daniela Cristaldo
-- Yamil 
+- Yamil Padilla
 
 ## Manual de instalación.
 Al iniciar el sistema LFS,ejecute el siguiente comando para poder ir a la raiz del sistema de archivos.
