@@ -62,6 +62,7 @@ copiar [-h] Archivo [Archivo ...] Directorio_Destino
 |:---:|:---:|:---:|
 |`Archivo`| Ruta de absoluta o relativa del archivo que se desea copiar|No|
 |`Directorio_destino`| Ruta de absoluta o relativa del directorio|No|
+|`-h`| Muestra la descripcion, uso, argumentos del comando |Si|
 ### Mover
 Mueve un archivo o varios archivos en un directorio especificado por el usuario.
 ```
@@ -72,6 +73,7 @@ mover [-h] Archivo [Archivo ...] Directorio_Destino
 |:---:|:---:|:---:|
 |`Archivo`|Ruta de absoluta o relativa del archivo que se desea copiar|No|
 |`Directorio_Destino`|Ruta de absoluta o relativa del directorio|No|
+|`-h`| Muestra la descripcion, uso, argumentos del comando |Si|
 ### Renombrar 
 Cambia el nombre de un archivo.
 ```
@@ -82,6 +84,7 @@ renombrar [-h] Archivo Nuevo_Nombre
 |:---:|:---:|:---:|
 |`Archivo`|Ruta de absoluta o relativa del archivo que se desea copiar|No|
 |`Nuevo_Nombre`| El nuevo nombre del archivo|No|
+|`-h`| Muestra la descripcion, uso, argumentos del comando |Si|
 ### Listar
 Lista los archivos o directorios de una ruta especifica. Si no recibe argumento, lista los archivos y directorios de la carpeta actual.
 ```
@@ -91,6 +94,7 @@ listar [-h] [Directorio_Destino]
 |Argumentos|Descripcion|Opcional|
 |:---:|:---:|:---:|
 |`Directorio_Destino`|Ruta de absoluta o relativa que se desea ver los archivos y directorios|Si|
+|`-h`| Muestra la descripcion, uso, argumentos del comando |Si|
 ### Creardir
 Crea un directorio, si se introduce mas de un nombre se crea por cada uno.
 ```
@@ -100,6 +104,7 @@ creardir [-h] Nombre_Directorio [Nombre_Directorio ...]
 |Argumentos|Descripcion|Opcional|
 |:---:|:---:|:---:|
 |`Nombre_Directorio`|Nombre del nuevo directorio|No|
+|`-h`| Muestra la descripcion, uso, argumentos del comando |Si|
 ### Ir
 Cambia el directorio. Si no recibe argumentos, nos traslada al primer directorio '/'
 ```
@@ -109,6 +114,7 @@ ir [-h] [Directorio_Destino]
 |Argumentos|Descripcion|Opcional|
 |:---:|:---:|:---:|
 |`Directorio_Destino`|Ruta de absoluta o relativa para el traslado |Si|
+|`-h`| Muestra la descripcion, uso, argumentos del comando |Si|
 ### Permisos
 Asigna o modifica permisos a un archivo o carpeta.
 ```
@@ -119,6 +125,7 @@ permisos [-h] Permisos Directorio_Destino
 |:---:|:---:|:---:|
 |`Permisos`| Permisos que se le asignara al archivo o directorio |No|
 |`Directorio_Destino`|Ruta de absoluta o relativa del archivo o directorio |No|
+|`-h`| Muestra la descripcion, uso, argumentos del comando |Si|
 <details><summary>Permisos en numeros</summary>
 <p>
 
@@ -133,3 +140,34 @@ permisos [-h] Permisos Directorio_Destino
 
 </p>
 </details>
+
+### Propietario
+Cambia el propietario de uno o varios archivos, si se introduce mas de un archivo, se modificara el propietario de ese conjunto de archivos.
+```
+propietario [-h] UsuarioID:GrupoID Archivo [Archivo ...]
+```
+#### Argumentos
+|Argumentos|Descripcion|Opcional|
+|:---:|:---:|:---:|
+|`UsuarioID:GrupoID`| id nuevo del usuario y del grupo que modificaremos |No|
+|`Archivo`|Ruta de absoluta o relativa del archivo|No|
+|`-h`| Muestra la descripcion, uso, argumentos del comando |Si|
+### Contraseña
+Cambia la contraseña de un usuario. Si no se recibe argumentos se modificara la contraseña del usuario actual.
+```
+contrasena [-h] [Usuario]
+```
+#### Argumentos
+|Argumentos|Descripcion|Opcional|
+|:---:|:---:|:---:|
+|`Usuario`| Nombre del usuario que se modificara la contraseña |Si|
+|`-h`| Muestra la descripcion, uso, argumentos del comando |Si|
+### Pwd
+Muestra la ruta del directorio actual en el se esta ubicado actualmente.
+```
+pwd [-h]
+```
+#### Argumentos
+|Argumentos|Descripcion|Opcional|
+|:---:|:---:|:---:|
+|`-h`| Muestra la descripcion, uso, argumentos del comando |Si|
