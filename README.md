@@ -21,7 +21,7 @@ Luego prosiga a instalar las dependencias, para esto utilice el siguiente comand
 ```sh
 pip install -r requirements.txt
 ```
-<details>
+<details><summary>Actualizacion de dependencias</summary>
 <p>
 Si desea actualizar las dependencias ejecute el comando
   
