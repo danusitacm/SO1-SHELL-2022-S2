@@ -8,7 +8,7 @@ Al iniciar el sistema LFS,ejecute el siguiente comando para poder ir a la raiz d
 ```sh
 -bash-5.2# cd /
 ```
-Si desea asegurarse de que se encuentra en la raiz,no dude en usar pwd para su verificacion.
+Si desea asegurarse de que se encuentra en la raiz,no dude en usar pwd para su verificacion.  
 Clone el repositorio [SO1-SHELL-2022-S2](https://github.com/danusitacm/SO1-SHELL-2022-S2).
 ```sh
 -bash-5.2# git clone https://github.com/danusitacm/SO1-SHELL-2022-S2.git
