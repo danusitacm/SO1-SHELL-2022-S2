@@ -43,7 +43,12 @@ Ahora solo falta agregar la shell en /etc/profile
 ```sh
 -bash-5.2# echo "bash /shell.sh" >> /etc/profile
 ```
-Listo todos los pasos reiniciamos el sistema.
+Listo, reinicie el sistema.
 ```sh
 -bash-5.2# shutdown -r 0
 ```
+Cuando reinicie el sistema LFS vera algo como esto 
+```sh
+(Cmd) 
+```
+
