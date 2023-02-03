@@ -28,13 +28,13 @@ class FirstApp(cmd2.Cmd):
     #COMANDOS BASICOS
     #Copiar
     cop_parser = argparse.ArgumentParser(description='Copiar un archivo en un directorio determinado.')
-    cop_parser.add_argument('Archivos', type=str ,nargs='+',help = 'Los archivos a utilizar')
+    cop_parser.add_argument('Archivo', type=str ,nargs='+',help = 'Los archivos a utilizar')
     cop_parser.add_argument('Directorio_Destino', type=str, help = 'Directorio destino')
     @cmd2.with_argparser(cop_parser)
     def do_copiar(self, args: argparse.Namespace) -> None:
         try:
             pathDestino = os.path.abspath(args.Directorio_Destino)
-            for arch in args.Archivos:
+            for arch in args.Archivo:
                 pathOrigen=os.path.abspath(arch)
                 pathDestino = os.path.join(pathDestino,arch)
                 fileDest = open(pathDestino, 'w')
@@ -49,13 +49,13 @@ class FirstApp(cmd2.Cmd):
             logs.SystemError(msg)
     #Mover
     mov_parser = argparse.ArgumentParser(description='Mover un archivo a un directorio determinado.')
-    mov_parser.add_argument('Archivos', type=str,nargs='+',help = 'Los archivos a utilizar')
+    mov_parser.add_argument('Archivo', type=str,nargs='+',help = 'Los archivos a utilizar')
     mov_parser.add_argument('Directorio_Destino',type=str, help = 'Directorio destino')
     @cmd2.with_argparser(mov_parser)
     def do_mover(self, args: argparse.Namespace) -> None:
         try:
             pathDestino = os.path.abspath(args.Directorio_Destino)
-            for arch in args.Archivos:
+            for arch in args.Archivo:
                 pathOrigen=os.path.abspath(arch)
                 pathDestino = os.path.join(pathDestino,arch)
                 fileDest = open(pathDestino, 'w')
@@ -71,12 +71,12 @@ class FirstApp(cmd2.Cmd):
             logs.SystemError(msg)        
     #Renombrar
     renombrar_parser = argparse.ArgumentParser(description='Renombrar un archivo.')
-    renombrar_parser.add_argument('Archivos', type=str,help = 'Archivo a renombrar.')
-    renombrar_parser.add_argument('Nuevo_nombre' ,type=str, help = 'Nuevo nombre del archivo.')
+    renombrar_parser.add_argument('Archivo', type=str,help = 'Archivo a renombrar.')
+    renombrar_parser.add_argument('Nuevo_Nombre' ,type=str, help = 'Nuevo nombre del archivo.')
     @cmd2.with_argparser(renombrar_parser)
     def do_renombrar(self, args: argparse.Namespace) -> None:
         try:
-            pathDestino = os.path.join(os.getcwd(),args.Nuevo_nombre)
+            pathDestino = os.path.join(os.getcwd(),args.Nuevo_Nombre)
             pathOrigen=os.path.abspath(args.Archivo)
             fileDest = open(pathDestino, 'w')
             fileOrigen = open(pathOrigen,'r')
@@ -128,11 +128,11 @@ class FirstApp(cmd2.Cmd):
             logs.SystemError(msg)
     
     #creardir
-    creardir_parser =argparse.ArgumentParser(description='Crear archivos.')
-    creardir_parser.add_argument('Nombre_Archivo', type=str, nargs='*',help ='El nombre del archivo')
+    creardir_parser =argparse.ArgumentParser(description='Crear directorios.')
+    creardir_parser.add_argument('Nombre_Directorio',type=str,nargs='+',help ='El nombre del directorio')
     @cmd2.with_argparser(creardir_parser)
     def do_creardir(self, args: argparse.Namespace) -> None:
-        for arch in args.Nombre_Archivo:
+        for arch in args.Nombre_Directorio:
             try:
                 os.mkdir(arch)
             except Exception  as error:
@@ -167,12 +167,12 @@ class FirstApp(cmd2.Cmd):
     #permisos
     permiso_parser=argparse.ArgumentParser(description='Cambiar los permisos sobre un archivo o un directorio.')
     permiso_parser.add_argument('Permisos',type=str)
-    permiso_parser.add_argument('Path',type=str)
+    permiso_parser.add_argument('Directorio_Destino',type=str)
     @cmd2.with_argparser(permiso_parser)
-    def do_permiso(self, args: argparse.Namespace) -> None:
+    def do_permisos(self, args: argparse.Namespace) -> None:
         try:
-            os.path.abspath(args.Path)
-            os.chmod(args.Path, int(args.Permisos,8))
+            os.path.abspath(args.Directorio_Destino)
+            os.chmod(args.Directorio_Destino, int(args.Permisos,8))
         except Exception as error:
             msg=f'permiso: {error}'
             self.perror(msg)
@@ -180,12 +180,12 @@ class FirstApp(cmd2.Cmd):
     #propietario
     propietario_parser=argparse.ArgumentParser(description='Cambiar los propietarios sobre un archivo o un conjunto de archivos.')
     propietario_parser.add_argument('UsuarioID',type=str,help='USUARIOID:[GRUPOID]')
-    propietario_parser.add_argument('Archivos',nargs='*',type=str)
+    propietario_parser.add_argument('Archivo',nargs='+',type=str)
     @cmd2.with_argparser(propietario_parser)
     def do_propietario(self, args: argparse.Namespace) -> None:
         try:
             usuario=args.UsuarioID.split(':')
-            for i in args.Archivos:
+            for i in args.Archivo:
                 os.chown(os.path.abspath(i),int(usuario[0]),int(usuario[1]))
         except Exception as error:
             msg=f'propietario: {error}'
@@ -196,29 +196,36 @@ class FirstApp(cmd2.Cmd):
     contrasena_parser.add_argument('Usuario',nargs='?',default=getpass.getuser(),type=str,help='Usuario que desea cambiar la contraseña')
     @cmd2.with_argparser(contrasena_parser)
     def do_contrasena(self, args: argparse.Namespace) -> None:
+        ban=0
         try:
-            if(os.getuid==0):
-                if(resources.check_string(args.Usuario,"etc/passwd")):
-                    newPass=getpass.getpass("Introduzca una contraseña: ")
-                    tempNewPass=getpass.getpass("Vuelva a introducir la contraseña para confirmar: ")
-                    if newPass==tempNewPass:
-                        cryptpass=crypt.crypt(newPass,crypt.mksalt(crypt.METHOD_SHA512)) 
-                        usuShadow=resources.obtenerFilaUsuario(args.Usuario,"/etc/shadow",':',3)
-                        usuShadow.pop(1)
-                        usuShadow.insert(1,cryptpass)
-                        resources.guardarFilaUsuario(args.Usuario,"/etc/shadow",resources.unirArray(usuShadow,':'))
-                        self.poutput("Se cambio la contraseña, exitosamente!!")
-                    else:
-                        msg=f'contraseña: Las contraseñas no coinciden.'
+            if(os.getuid!=0 and args.Usuario==getpass.getuser()):
+                os.system('sudo chmod -R 777  /etc/passwd')
+                os.system('sudo chmod -R 777  /etc/shadow')
+                ban=1
+            elif (os.getuid!=0 and args.Usuario!=getpass.getuser()):
+                msg=f'contrasena: No tiene los permisos suficientes. Solo el usuario root puede modificar contraseñas de otros usuarios.'
+            elif(resources.check_string(args.Usuario,"/etc/passwd")):
+                newPass=getpass.getpass("Introduzca una contraseña: ")
+                tempNewPass=getpass.getpass("Vuelva a introducir la contraseña para confirmar: ")
+                if newPass==tempNewPass:
+                    cryptpass=crypt.crypt(newPass,crypt.mksalt(crypt.METHOD_SHA512)) 
+                    usuShadow=resources.obtenerFilaUsuario(args.Usuario,"/etc/shadow",':',3)
+                    usuShadow.pop(1)
+                    usuShadow.insert(1,cryptpass)
+                    resources.guardarFilaUsuario(args.Usuario,"/etc/shadow",resources.unirArray(usuShadow,':'))
+                    self.poutput("Se cambio la contraseña, exitosamente!!")
                 else:
-                    msg=f'contraseña: El usuario {args.Usuario} no existe.'
+                    msg=f'contrasena: Las contraseñas no coinciden.'
             else:
-                msg=f'contraseña: No tiene los permisos suficientes. Solo el usuario root puede modificar contraseñas.'
+                    msg=f'contrasena: El usuario {args.Usuario} no existe.'
         except Exception as error:
-            msg=f'contraseña: {error}'
+            msg=f'contrasena: {error}'
         finally:
             self.perror(msg)
             logs.SystemError(msg)
+            if ban==1:
+                os.system('sudo chmod -R 644  /etc/passwd')
+                os.system('sudo chmod -R 640  /etc/shadow')
     #grep
     grep_parser = argparse.ArgumentParser(description='Buscar un string en un archivo.')
     grep_parser.add_argument('String', type=str,nargs=1,help = 'String a buscar')
