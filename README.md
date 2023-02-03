@@ -183,3 +183,37 @@ kill [-h] Sigkill PID
 |`Sigkill`|La señal que tenemos que enviar al comando kill |No|
 |`PID`| Identificador del proceso |No|
 |`-h`| Muestra la descripcion, uso, argumentos del comando |Si|
+### Grep
+Busca un string en un archivo.
+```
+grep [-h] String Archivo
+```
+#### Argumentos
+|Argumentos|Descripcion|Opcional|
+|:---:|:---:|:---:|
+|`String`| Palabra que queremos buscar en un archivo |No|
+|`Archivo`| Ruta de absoluta o relativa del archivo |No|
+|`-h`| Muestra la descripcion, uso, argumentos del comando |Si|
+### History
+Muestra el historial de comandos que realizo el usuario.
+```
+history [-h] 
+```
+#### Argumentos
+|Argumentos|Descripcion|Opcional|
+|:---:|:---:|:---:|
+|`-h`| Muestra la descripcion, uso, argumentos del comando |Si|
+### Ftp
+Realiza transferencia ftp.
+```
+ftp [-h] {subir,descargar,listar,eliminar} [Archivo]
+```
+#### Argumentos
+|Argumentos|Descripcion|Opcional|
+|:---:|:---:|:---:|
+|`Archivo`| Nombre del archivo,no hace falta poner con listar |No|
+|`subir`| Subir un archivo al servidor FTP |Si|
+|`descargar`| Descargar un archivo al servidor FTP |Si|
+|`listar`| Lista los archivos en el servidor FTP |Si|
+|`eliminar`| Elimina un archivo en el servidor FTP |Si|
+|`h`| Muestra la descripcion, uso, argumentos del comando |Si|
