@@ -51,4 +51,12 @@ Cuando reinicie el sistema LFS vera algo como esto
 ```sh
 (Cmd) 
 ```
-
+## Comandos
+### Copiar
+Copia un archivo o varios archivos en un directorio especificado por el usuario
+```
+copiar [-h] Archivos [Archivos ...] Directorio_Destino
+```
+#### Argumentos
+- Archivos              -> Los archivos que se desean copiar
+- Directorio_Destino    -> Direccion donde se copiaran los archivos
