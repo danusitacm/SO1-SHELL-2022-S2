@@ -60,8 +60,8 @@ copiar [-h] Archivo [Archivo ...] Directorio_Destino
 #### Argumentos
 |Argumentos|Descripcion|Opcional|
 |:---:|:---:|:---:|
-|`Archivo`|El archivo que se desea copiar|No|
-|`Directorio_destino`| Direccion donde se copiaran los archivos|No|
+|`Archivo`| Ruta de absoluta o relativa del archivo que se desea copiar|No|
+|`Directorio_destino`| Ruta de absoluta o relativa del directorio|No|
 ### Mover
 Mueve un archivo o varios archivos en un directorio especificado por el usuario.
 ```
@@ -70,8 +70,8 @@ mover [-h] Archivo [Archivo ...] Directorio_Destino
 #### Argumentos
 |Argumentos|Descripcion|Opcional|
 |:---:|:---:|:---:|
-|`Archivo`|El archivo que se desea mover|No|
-|`Directorio_Destino`| Direccion donde se moveran los archivos|No|
+|`Archivo`|Ruta de absoluta o relativa del archivo que se desea copiar|No|
+|`Directorio_Destino`|Ruta de absoluta o relativa del directorio|No|
 ### Renombrar 
 Cambia el nombre de un archivo.
 ```
@@ -80,5 +80,56 @@ renombrar [-h] Archivo Nuevo_Nombre
 #### Argumentos
 |Argumentos|Descripcion|Opcional|
 |:---:|:---:|:---:|
-|`Archivo`|El archivo que se desea renombrar o ruta del archivo|No|
+|`Archivo`|Ruta de absoluta o relativa del archivo que se desea copiar|No|
 |`Nuevo_Nombre`| El nuevo nombre del archivo|No|
+### Listar
+Lista los archivos o directorios de una ruta especifica. Si no recibe argumento, lista los archivos y directorios de la carpeta actual.
+```
+listar [-h] [Directorio_Destino]
+```
+#### Argumentos
+|Argumentos|Descripcion|Opcional|
+|:---:|:---:|:---:|
+|`Directorio_Destino`|Ruta de absoluta o relativa que se desea ver los archivos y directorios|Si|
+### Creardir
+Crea un directorio, si se introduce mas de un nombre se crea por cada uno.
+```
+creardir [-h] Nombre_Directorio [Nombre_Directorio ...]
+```
+#### Argumentos
+|Argumentos|Descripcion|Opcional|
+|:---:|:---:|:---:|
+|`Nombre_Directorio`|Nombre del nuevo directorio|No|
+### Ir
+Cambia el directorio. Si no recibe argumentos, nos traslada al primer directorio '/'
+```
+ir [-h] [Directorio_Destino]
+```
+#### Argumentos
+|Argumentos|Descripcion|Opcional|
+|:---:|:---:|:---:|
+|`Directorio_Destino`|Ruta de absoluta o relativa para el traslado |Si|
+### Permisos
+Asigna o modifica permisos a un archivo o carpeta.
+```
+permisos [-h] Permisos Directorio_Destino
+```
+#### Argumentos
+|Argumentos|Descripcion|Opcional|
+|:---:|:---:|:---:|
+|`Permisos`| Permisos que se le asignara al archivo o directorio |No|
+|`Directorio_Destino`|Ruta de absoluta o relativa del archivo o directorio |No|
+<details><summary>Permisos en numeros</summary>
+<p>
+
+- 0 = --- = sin acceso
+- 1 = --x = ejecución
+- 2 = -w- = escritura
+- 3 = -wx = escritura y ejecución
+- 4 = r-- = lectura
+- 5 = r-x = lectura y ejecución
+- 6 = rw- = lectura y escritura
+- 7 = rwx = lectura, escritura y ejecución
+
+</p>
+</details>
