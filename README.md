@@ -153,7 +153,7 @@ propietario [-h] UsuarioID:GrupoID Archivo [Archivo ...]
 |`Archivo`|Ruta de absoluta o relativa del archivo|No|
 |`-h`| Muestra la descripcion, uso, argumentos del comando |Si|
 ### Contraseña
-Cambia la contraseña de un usuario. Si no se recibe argumentos se modificara la contraseña del usuario actual.
+Cambia la contraseña de un usuario. Si no se recibe argumentos se modificara la contraseña del usuario actual. Solo el usuario root puede cambiar contraseña de otros usuarios.
 ```
 contrasena [-h] [Usuario]
 ```
@@ -170,4 +170,16 @@ pwd [-h]
 #### Argumentos
 |Argumentos|Descripcion|Opcional|
 |:---:|:---:|:---:|
+|`-h`| Muestra la descripcion, uso, argumentos del comando |Si|
+
+### kill
+Terminar procesos con señales determinadas.
+```
+kill [-h] Sigkill PID
+```
+#### Argumentos
+|Argumentos|Descripcion|Opcional|
+|:---:|:---:|:---:|
+|`Sigkill`|La señal que tenemos que enviar al comando kill |No|
+|`PID`| Identificador del proceso |No|
 |`-h`| Muestra la descripcion, uso, argumentos del comando |Si|
