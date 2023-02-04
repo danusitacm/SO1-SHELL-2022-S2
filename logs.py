@@ -98,4 +98,5 @@ def RegHorarios(status):
         file.flush()
         file.close()
     except:
-        log.fatal("Error, no se pudo acceder al archivo usuario_horarios_log.log")
+        #log.fatal("Error, no se pudo acceder al archivo usuario_horarios_log.log")
+        print(' ')

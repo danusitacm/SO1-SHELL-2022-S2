@@ -22,7 +22,7 @@ class FirstApp(cmd2.Cmd):
         super().__init__()
         builtin_commands=['alias','edit','py','run_pyscript','run_script','shortcuts','macro','shell']
         self.hidden_commands.extend(builtin_commands) #Para esconder los Builtin Commands 
-        logs.RegHorario('inicio') 
+        logs.RegHorarios('inicio') 
     def onecmd(self, s,**kwargs):
         comando=s.raw
         logs.RegComandos(comando)
