@@ -196,12 +196,12 @@ class FirstApp(cmd2.Cmd):
     propietario_parser.add_argument('UsuarioID',type=str,help='USUARIOID:[GRUPOID]')
     propietario_parser.add_argument('Archivo',nargs='+',type=str)
     @cmd2.with_argparser(propietario_parser)
-    def do_propietario(self, args: argparse.Namespace) -> None:
-        self.poutput(1)       
+    def do_propietario(self, args: argparse.Namespace) -> None:      
         try:
             usuario=args.UsuarioID.split(':')
             for i in args.Archivo:
                 os.chown(os.path.abspath(i),int(usuario[0]),int(usuario[1]))
+            self.poutput('Se cambio el propietario') 
         except Exception as error:
             msg=f'propietario: {error}'
             self.perror(msg)
