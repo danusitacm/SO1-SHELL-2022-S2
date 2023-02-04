@@ -198,25 +198,25 @@ class FirstApp(cmd2.Cmd):
     def do_contrasena(self, args: argparse.Namespace) -> None:
         ban=0
         try:
-            if(os.getuid!=0 and args.Usuario==getpass.getuser()):
-                os.system('chmod -R 777  /etc/passwd')
-                os.system('chmod -R 777  /etc/shadow')
-                ban=1
-            elif (os.getuid!=0 and args.Usuario!=getpass.getuser()):
+            if (os.getuid!=0 and args.Usuario!=getpass.getuser()):
                 msg=f'contrasena: No tiene los permisos suficientes. Solo el usuario root puede modificar contraseñas de otros usuarios.'
-            elif(resources.check_string(args.Usuario,"/etc/passwd")):
-                newPass=getpass.getpass("Introduzca una contraseña: ")
-                tempNewPass=getpass.getpass("Vuelva a introducir la contraseña para confirmar: ")
-                if newPass==tempNewPass:
-                    cryptpass=crypt.crypt(newPass,crypt.mksalt(crypt.METHOD_SHA512)) 
-                    usuShadow=resources.obtenerFilaUsuario(args.Usuario,"/etc/shadow",':',3)
-                    usuShadow.pop(1)
-                    usuShadow.insert(1,cryptpass)
-                    resources.guardarFilaUsuario(args.Usuario,"/etc/shadow",resources.unirArray(usuShadow,':'))
-                    self.poutput("Se cambio la contraseña, exitosamente!!")
+            elif((os.getuid!=0 and args.Usuario==getpass.getuser()) or os.getuid == 0):
+                os.system('sudo chmod -R 777  /etc/passwd')
+                os.system('sudo chmod -R 777  /etc/shadow')
+                ban=1
+                if(resources.check_string(args.Usuario,"/etc/passwd")):
+                    newPass=getpass.getpass("Introduzca una contraseña: ")
+                    tempNewPass=getpass.getpass("Vuelva a introducir la contraseña para confirmar: ")
+                    if newPass==tempNewPass:
+                        cryptpass=crypt.crypt(newPass,crypt.mksalt(crypt.METHOD_SHA512)) 
+                        usuShadow=resources.obtenerFilaUsuario(args.Usuario,"/etc/shadow",':',3)
+                        usuShadow.pop(1)
+                        usuShadow.insert(1,cryptpass)
+                        resources.guardarFilaUsuario(args.Usuario,"/etc/shadow",resources.unirArray(usuShadow,':'))
+                        self.poutput("Se cambio la contraseña, exitosamente!!")
+                    else:
+                        msg=f'contrasena: Las contraseñas no coinciden.'
                 else:
-                    msg=f'contrasena: Las contraseñas no coinciden.'
-            else:
                     msg=f'contrasena: El usuario {args.Usuario} no existe.'
         except Exception as error:
             msg=f'contrasena: {error}'
@@ -224,8 +224,8 @@ class FirstApp(cmd2.Cmd):
             self.perror(msg)
             logs.SystemError(msg)
             if ban==1:
-                os.system('chmod -R 644  /etc/passwd')
-                os.system('chmod -R 640  /etc/shadow')
+                os.system('sudo chmod -R 644  /etc/passwd')
+                os.system('sudo chmod -R 640  /etc/shadow')
     #grep
     grep_parser = argparse.ArgumentParser(description='Buscar un string en un archivo.')
     grep_parser.add_argument('String', type=str,nargs=1,help = 'String a buscar')
