@@ -19,7 +19,7 @@ chmod -R 777 /SO1-SHELL-2022-S2
 ```
 Luego prosiga a instalar las dependencias, para esto utilice el siguiente comando
 ```sh
-pip install -r requirements.txt
+pip3 install -r /SO1-SHELL-2022-S2/requirements.txt
 ```
 <details><summary>Actualizacion de dependencias</summary>
 <p>
