@@ -70,26 +70,14 @@ def Transferencias(message,status):
             file.close()
     except:
         log.fatal("Error, no se pudo acceder al archivo Shell_transferencias.log")
-def RegHorarios(status):
-    info = resources.obtenerFilaUsuario(getpass.getuser(),'/etc/passwd',':',5)
-    info_user = info[4].split(' ')
-    if info_user:
-        horario = info_user[0].split(',')
+def RegHorarios(message):
     __path__= '/var/log/shell/usuario_horarios_log.log'
     resources.crearArchivos(__path__)
     try:
-        message =''
-        if status == 'inicio':
-            message = f"inicio sesion"
-        else:
-            message = f"cerro sesion"
-        if horario:    
-            if horario[0] <= time.struct_time.tm_hour <= horario[1] :
-                message = f"{message} - fuera de horario"
         log=logging.getLogger(getpass.getuser())
-        log.setLevel(logging.WARNING)
+        log.setLevel(logging.DEBUG)
         file=logging.FileHandler(__path__)
-        file.setLevel(logging.WARNING)
+        file.setLevel(logging.DEBUG)
         formato=logging.Formatter('%(asctime)s - %(name)s - %(message)s')
         file.setFormatter(formato)
         log.addHandler(file)
@@ -98,5 +86,4 @@ def RegHorarios(status):
         file.flush()
         file.close()
     except:
-        #log.fatal("Error, no se pudo acceder al archivo usuario_horarios_log.log")
-        print(' ')
+        log.fatal("Error, no se pudo acceder al archivo usuario_horarios_log.log")
