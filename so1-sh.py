@@ -320,8 +320,8 @@ class FirstApp(cmd2.Cmd):
     #usuario
     usuario_parser = argparse.ArgumentParser(description='Agrega un usuario.')
     usuario_parser.add_argument('Usuario', type=str,nargs=1,help = 'Nombre de usuario')
-    usuario_parser.add_argument('-i','--ip',default=' ',type=str,nargs=1,help = 'Ips permitidas (separadas por comas)')
-    usuario_parser.add_argument('-ho','--horario',default=' ',type=str,nargs=1,help = 'Horario permitido (horainicio,horasalida)')
+    usuario_parser.add_argument('-i','--ip',default='0',type=str,nargs=1,help = 'Ips permitidas (separadas por comas)')
+    usuario_parser.add_argument('-ho','--horario',default='0,23',type=str,nargs=1,help = 'Horario permitido (horainicio,horasalida)')
     @cmd2.with_argparser(usuario_parser)
     def do_usuario(self, args: argparse.Namespace) -> None:
         try:
@@ -332,7 +332,7 @@ class FirstApp(cmd2.Cmd):
                 os.system('chmod -R 777  /etc/group')
                 os.system('chmod -R 777  /etc/shadow')
                 homedir = f"/home/{args.Usuario[0]}"
-                lineausu =f"\n{args.Usuario[0]}:x:{UID}:{GID}:{args.ip} {args.horario}:{homedir}:/bin/bash"
+                lineausu =f"\n{args.Usuario[0]}:x:{UID}:{GID}:{args.ip} {args.horario[0]}:{homedir}:/bin/bash"
                 lineagro =f"\n{args.Usuario[0]}:x:{GID}:"
                 lineshaw =f"\n{args.Usuario[0]}:*:19390:0:99999:7:::"
                 with open("/etc/group",'a') as tem_f:
