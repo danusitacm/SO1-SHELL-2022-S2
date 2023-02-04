@@ -316,7 +316,42 @@ class FirstApp(cmd2.Cmd):
             msg=f'propietario: {error}'
             self.perror(msg)
             logs.SystemError(msg)
-     #contraseña
+    #usuario
+    usuario_parser = argparse.ArgumentParser(description='Agrega un usuario.')
+    usuario_parser.add_argument('Usuario', type=str,nargs=1,help = 'Nombre de usuario')
+    usuario_parser.add_argument('-i','--ip',default=' ',type=str,nargs=1,help = 'Ips permitidas (separadas por comas)')
+    usuario_parser.add_argument('-ho','--horario',default=' ',type=str,nargs=1,help = 'Horario permitido (horainicio,horasalida)')
+    @cmd2.with_argparser(usuario_parser)
+    def do_usuario(self, args: argparse.Namespace) -> None:
+        try:
+            '''if os.getuid==0:'''
+            if not resources.check_string(args.Usuario[0],"/etc/passwd"):
+                UID = resources.NewUID()
+                GID = resources.NewGID()
+                os.system('sudo chmod -R 777  /etc/passwd')
+                os.system('sudo chmod -R 777  /etc/group')
+                homedir = f"/home/{args.Usuario[0]}"
+                lineausu =f"\n{args.Usuario[0]}:x:{UID}:{GID}:{args.ip} {args.horario}:{homedir}:/bin/bash"
+                lineagro =f"\n{args.Usuario[0]}:x:{GID}:"
+                with open("/etc/group",'a') as tem_f:
+                    tem_f.write(lineagro)
+                with open("/etc/passwd",'a') as tem_f:
+                    tem_f.write(lineausu)
+                os.system('sudo chmod 777 /home')
+                os.mkdir(homedir)
+                os.system('sudo chmod 755 /home')
+                os.system(f'sudo chmod -R 777 {homedir}')
+                self.poutput(f'Usuario creado correctamente')
+                os.system('sudo chmod -R 644  /etc/passwd')
+                os.system('sudo chmod -R 644  /etc/group')
+            else:
+                msg=f'usuario: El usuario {args.Usuario} ya existe.'
+            '''else:
+                self.poutput(f'Solo el usuario root puede crear usuarios') '''       
+        except Exception as error:
+            msg=f'usuario: {error}'
+            self.perror(msg)
+            logs.SystemError(msg)
 if __name__ == '__main__':
     import sys
     c = FirstApp()
