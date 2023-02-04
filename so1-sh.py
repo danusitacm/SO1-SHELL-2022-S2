@@ -22,7 +22,7 @@ class FirstApp(cmd2.Cmd):
         super().__init__()
         builtin_commands=['alias','edit','py','run_pyscript','run_script','shortcuts','macro','shell']
         self.hidden_commands.extend(builtin_commands) #Para esconder los Builtin Commands 
-        logs.RegHorarios('inicio') 
+        resources.mensaje_horarios('inicio')
     def onecmd(self, s,**kwargs):
         comando=s.raw
         logs.RegComandos(comando)
@@ -106,7 +106,7 @@ class FirstApp(cmd2.Cmd):
     @cmd2.with_argparser(apagar_parser)
     def do_apagar(self, args: argparse.Namespace) -> None:
         try:
-            logs.RegHorarios('cerro')
+            resources.mensaje_horarios('cerro') 
             os.system('shutdown now')
         except Exception as error:
             msg=f'pwd: {error}'
