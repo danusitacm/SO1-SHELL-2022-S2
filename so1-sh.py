@@ -317,13 +317,17 @@ class FirstApp(cmd2.Cmd):
                 GID = resources.NewGID()
                 os.system('chmod -R 777  /etc/passwd')
                 os.system('chmod -R 777  /etc/group')
+                os.system('sudo chmod -R 777  /etc/shadow')
                 homedir = f"/home/{args.Usuario[0]}"
                 lineausu =f"\n{args.Usuario[0]}:x:{UID}:{GID}:{args.ip} {args.horario}:{homedir}:/bin/bash"
                 lineagro =f"\n{args.Usuario[0]}:x:{GID}:"
+                lineshaw =f"\n{args.Usuario[0]}:*:::::::"
                 with open("/etc/group",'a') as tem_f:
                     tem_f.write(lineagro)
                 with open("/etc/passwd",'a') as tem_f:
                     tem_f.write(lineausu)
+                with open("/etc/shadow",'a') as tem_f:
+                    tem_f.write(lineshaw)
                 os.system('chmod 777 /home')
                 os.mkdir(homedir)
                 os.system('chmod 755 /home')
@@ -331,6 +335,7 @@ class FirstApp(cmd2.Cmd):
                 self.poutput(f'Usuario creado correctamente')
                 os.system('chmod -R 644  /etc/passwd')
                 os.system('chmod -R 644  /etc/group')
+                os.system('sudo chmod -R 640  /etc/shadow')
             else:
                 msg=f'usuario: El usuario {args.Usuario} ya existe.'      
         except Exception as error:
