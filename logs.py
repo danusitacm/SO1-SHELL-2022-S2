@@ -1,4 +1,5 @@
 import os
+import time
 import logging
 import getpass
 import resources
@@ -69,21 +70,32 @@ def Transferencias(message,status):
             file.close()
     except:
         log.fatal("Error, no se pudo acceder al archivo Shell_transferencias.log")
-def RegHorario(message):
-    __path__= '/var/log/shell/usuario_horario_log.log'
+def RegHorarios(status):
+    info = resources.obtenerFilaUsuario(getpass.getuser(),'/etc/passwd',':',5)
+    info_user = info[4].split(' ')
+    if info_user:
+        horario = info_user[0].split(',')
+    __path__= '/var/log/shell/usuario_horarios_log.log'
     resources.crearArchivos(__path__)
-    os.system('chmod -R 777  /var/log/usuario_horario_log.log')
     try:
+        message =''
+        if status == 'inicio':
+            message = f"inicio sesion"
+        else:
+            message = f"cerro sesion"
+        if horario:    
+            if horario[0] <= time.struct_time.tm_hour <= horario[1] :
+                message = f"{message} - fuera de horario"
         log=logging.getLogger(getpass.getuser())
         log.setLevel(logging.WARNING)
         file=logging.FileHandler(__path__)
         file.setLevel(logging.WARNING)
-        formato=logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        formato=logging.Formatter('%(asctime)s - %(name)s - %(message)s')
         file.setFormatter(formato)
         log.addHandler(file)
-        log.warning(message)
+        log.debug(message)
         log.removeHandler(file)
         file.flush()
         file.close()
     except:
-        log.fatal("Error, no se pudo acceder al archivo sistema_error.log")
+        log.fatal("Error, no se pudo acceder al archivo usuario_horarios_log.log")

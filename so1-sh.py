@@ -21,7 +21,8 @@ class FirstApp(cmd2.Cmd):
     def __init__(self):
         super().__init__()
         builtin_commands=['alias','edit','py','run_pyscript','run_script','shortcuts','macro','shell']
-        self.hidden_commands.extend(builtin_commands) #Para esconder los Builtin Commands  
+        self.hidden_commands.extend(builtin_commands) #Para esconder los Builtin Commands 
+        logs.RegHorario('inicio') 
     def onecmd(self, s,**kwargs):
         comando=s.raw
         logs.RegComandos(comando)
@@ -100,6 +101,18 @@ class FirstApp(cmd2.Cmd):
             msg=f'pwd: {error}'
             self.perror(msg)
             logs.SystemError(msg)
+    #Apagar
+    apagar_parser = argparse.ArgumentParser(description='Para apagar la maquina.')
+    @cmd2.with_argparser(apagar_parser)
+    def do_apagar(self, args: argparse.Namespace) -> None:
+        try:
+            logs.RegHorarios('cerro')
+            os.system('shutdown now')
+        except Exception as error:
+            msg=f'pwd: {error}'
+            self.perror(msg)
+            logs.SystemError(msg)
+    
     history_parser = argparse.ArgumentParser(description='Mostar el directorio actual de trabajo.')
     @cmd2.with_argparser(history_parser)
     def do_history(self, args: argparse.Namespace) -> None:
@@ -342,6 +355,7 @@ class FirstApp(cmd2.Cmd):
             msg=f'usuario: {error}'
             self.perror(msg)
             logs.SystemError(msg)
+    
 if __name__ == '__main__':
     import sys
     c = FirstApp()
