@@ -5,6 +5,7 @@ import resources
 def SystemError(message):
     __path__= '/var/log/shell/sistema_error.log'
     resources.crearArchivos(__path__)
+    os.system('chmod -R 777  /var/log/shell/sistema_error.log')
     try:
         log=logging.getLogger(getpass.getuser())
         log.setLevel(logging.ERROR)
@@ -22,6 +23,7 @@ def SystemError(message):
 def RegComandos(message):
     __path__= '/var/log/shell/comando.log'
     resources.crearArchivos(__path__)
+    os.system('chmod -R 777  /var/log/shell/comando.log')
     try:
         log=logging.getLogger(getpass.getuser())
         log.setLevel(logging.DEBUG)
@@ -39,6 +41,7 @@ def RegComandos(message):
 def Transferencias(message,status):
     __path__= '/var/log/shell/Shell_transferencias.log'
     resources.crearArchivos(__path__)
+    os.system('chmod -R 777  /var/log/shell/Shell_transferencias.log')
     try:
         if status=='INFO':
             log=logging.getLogger(getpass.getuser())
@@ -66,3 +69,21 @@ def Transferencias(message,status):
             file.close()
     except:
         log.fatal("Error, no se pudo acceder al archivo Shell_transferencias.log")
+def RegHorario(message):
+    __path__= '/var/log/shell/usuario_horario_log.log'
+    resources.crearArchivos(__path__)
+    os.system('chmod -R 777  /var/log/usuario_horario_log.log')
+    try:
+        log=logging.getLogger(getpass.getuser())
+        log.setLevel(logging.WARNING)
+        file=logging.FileHandler(__path__)
+        file.setLevel(logging.WARNING)
+        formato=logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        file.setFormatter(formato)
+        log.addHandler(file)
+        log.warning(message)
+        log.removeHandler(file)
+        file.flush()
+        file.close()
+    except:
+        log.fatal("Error, no se pudo acceder al archivo sistema_error.log")

@@ -184,15 +184,16 @@ class FirstApp(cmd2.Cmd):
     propietario_parser.add_argument('Archivo',nargs='+',type=str)
     @cmd2.with_argparser(propietario_parser)
     def do_propietario(self, args: argparse.Namespace) -> None:
+        self.poutput(1)       
         try:
             usuario=args.UsuarioID.split(':')
             for i in args.Archivo:
-                shutil.chown(os.path.abspath(i),int(usuario[0]),int(usuario[1]))
+                os.chown(os.path.abspath(i),int(usuario[0]),int(usuario[1]))
         except Exception as error:
             msg=f'propietario: {error}'
             self.perror(msg)
             logs.SystemError(msg)
-     #contraseña
+    #contraseña
     contrasena_parser=argparse.ArgumentParser(description='Cambiar la contraseña de un usuario.')
     contrasena_parser.add_argument('Usuario',nargs='?',default=getpass.getuser(),type=str,help='Usuario que desea cambiar la contraseña')
     @cmd2.with_argparser(contrasena_parser)
@@ -211,7 +212,6 @@ class FirstApp(cmd2.Cmd):
                 msg=f'contrasena: Las contraseñas no coinciden.'
         except Exception as error:
             msg=f'contrasena: {error}'
-        finally:
             self.perror(msg)
             logs.SystemError(msg)
     #grep
@@ -288,8 +288,8 @@ class FirstApp(cmd2.Cmd):
     demonio_parser =argparse.ArgumentParser(description='Manipulacion de demonios del sistema.')
     demonio_parser.add_argument('Accion',type=str,choices=['levantar','apagar','listar'],help='La accion que se desea realizar con los demonios.')
     demonio_parser.add_argument('Nombre',type=str,default=' ',nargs='?',help='Nombre del demonio')
-    @cmd2.with_argparser(propietario_parser)
-    def do_propietario(self, args: argparse.Namespace) -> None:
+    @cmd2.with_argparser(demonio_parser)
+    def do_demonio(self, args: argparse.Namespace) -> None:
         try:
             if(os.getuid==0):
                 if args.Accion=='levantar':
@@ -301,7 +301,7 @@ class FirstApp(cmd2.Cmd):
             else:
                     msg=f'demonio: El usuario no tiene los permisos suficientes.'
         except Exception as error:
-            msg=f'propietario: {error}'
+            msg=f'demonio: {error}'
             self.perror(msg)
             logs.SystemError(msg)
     #usuario
@@ -317,11 +317,11 @@ class FirstApp(cmd2.Cmd):
                 GID = resources.NewGID()
                 os.system('chmod -R 777  /etc/passwd')
                 os.system('chmod -R 777  /etc/group')
-                os.system('sudo chmod -R 777  /etc/shadow')
+                os.system('chmod -R 777  /etc/shadow')
                 homedir = f"/home/{args.Usuario[0]}"
                 lineausu =f"\n{args.Usuario[0]}:x:{UID}:{GID}:{args.ip} {args.horario}:{homedir}:/bin/bash"
                 lineagro =f"\n{args.Usuario[0]}:x:{GID}:"
-                lineshaw =f"\n{args.Usuario[0]}:*:::::::"
+                lineshaw =f"\n{args.Usuario[0]}:*:19390:0:99999:7:::"
                 with open("/etc/group",'a') as tem_f:
                     tem_f.write(lineagro)
                 with open("/etc/passwd",'a') as tem_f:
@@ -335,7 +335,7 @@ class FirstApp(cmd2.Cmd):
                 self.poutput(f'Usuario creado correctamente')
                 os.system('chmod -R 644  /etc/passwd')
                 os.system('chmod -R 644  /etc/group')
-                os.system('sudo chmod -R 640  /etc/shadow')
+                os.system('chmod -R 640  /etc/shadow')
             else:
                 msg=f'usuario: El usuario {args.Usuario} ya existe.'      
         except Exception as error:
