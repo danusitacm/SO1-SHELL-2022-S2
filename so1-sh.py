@@ -4,6 +4,7 @@ import resources
 import cmd2
 import argparse
 import os
+import shutil
 import os.path
 import getpass
 import crypt
@@ -186,7 +187,7 @@ class FirstApp(cmd2.Cmd):
         try:
             usuario=args.UsuarioID.split(':')
             for i in args.Archivo:
-                os.chown(os.path.abspath(i),int(usuario[0]),int(usuario[1]))
+                shutil.chown(os.path.abspath(i),int(usuario[0]),int(usuario[1]))
         except Exception as error:
             msg=f'propietario: {error}'
             self.perror(msg)
