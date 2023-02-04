@@ -199,8 +199,8 @@ class FirstApp(cmd2.Cmd):
         ban=0
         try:
             if(os.getuid!=0 and args.Usuario==getpass.getuser()):
-                os.system('sudo chmod -R 777  /etc/passwd')
-                os.system('sudo chmod -R 777  /etc/shadow')
+                os.system('chmod -R 777  /etc/passwd')
+                os.system('chmod -R 777  /etc/shadow')
                 ban=1
             elif (os.getuid!=0 and args.Usuario!=getpass.getuser()):
                 msg=f'contrasena: No tiene los permisos suficientes. Solo el usuario root puede modificar contraseñas de otros usuarios.'
@@ -224,8 +224,8 @@ class FirstApp(cmd2.Cmd):
             self.perror(msg)
             logs.SystemError(msg)
             if ban==1:
-                os.system('sudo chmod -R 644  /etc/passwd')
-                os.system('sudo chmod -R 640  /etc/shadow')
+                os.system('chmod -R 644  /etc/passwd')
+                os.system('chmod -R 640  /etc/shadow')
     #grep
     grep_parser = argparse.ArgumentParser(description='Buscar un string en un archivo.')
     grep_parser.add_argument('String', type=str,nargs=1,help = 'String a buscar')
