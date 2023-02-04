@@ -70,4 +70,22 @@ def NewGID() -> int:
     ultima_linea = datafile.pop()
     separada = ultima_linea.split(':')
     gid = int(separada[2]) + 1
-    return gid        
+    return gid
+
+def mensaje_horarios(status):
+    info = obtenerFilaUsuario(getpass.getuser(),'/etc/passwd',':',5)
+    info_user = info[4].split(' ')
+    hora = time.strftime("%H")
+    
+    if info_user:
+        horario = info_user[1].split(',')
+    print(f"{horario[0]},{hora},{horario[1]}")
+    message = ''
+    if status == 'inicio':
+        message = f"inicio sesion"
+    else:
+        message = f"cerro sesion"
+    if horario:    
+        if not int(horario[0]) <= int(time.strftime("%H")) <= int(horario[1]) :
+            message = f"{message} - fuera de horario"
+    logs.RegHorarios(message)
