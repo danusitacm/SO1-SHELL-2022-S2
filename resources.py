@@ -3,6 +3,7 @@ from os import path
 import time
 import cmd2
 import getpass
+import logs
 def verificar_direccion(dir) -> bool:
     os.path.abspath(dir)
     if path.isdir(dir):
