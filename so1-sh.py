@@ -324,7 +324,6 @@ class FirstApp(cmd2.Cmd):
     @cmd2.with_argparser(usuario_parser)
     def do_usuario(self, args: argparse.Namespace) -> None:
         try:
-            '''if os.getuid==0:'''
             if not resources.check_string(args.Usuario[0],"/etc/passwd"):
                 UID = resources.NewUID()
                 GID = resources.NewGID()
@@ -345,9 +344,7 @@ class FirstApp(cmd2.Cmd):
                 os.system('sudo chmod -R 644  /etc/passwd')
                 os.system('sudo chmod -R 644  /etc/group')
             else:
-                msg=f'usuario: El usuario {args.Usuario} ya existe.'
-            '''else:
-                self.poutput(f'Solo el usuario root puede crear usuarios') '''       
+                msg=f'usuario: El usuario {args.Usuario} ya existe.'      
         except Exception as error:
             msg=f'usuario: {error}'
             self.perror(msg)
