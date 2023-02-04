@@ -322,6 +322,6 @@ if __name__ == '__main__':
     c = FirstApp()
     if not os.path.exists('/var/log/shell'):
         #DANGER ZONE
-        os.system('sudo mkdir /var/log/shell')
-        os.system('sudo chmod -R 777  /var/log/shell')
+        os.system('mkdir /var/log/shell')
+        os.system('chmod -R 777  /var/log/shell')
     sys.exit(c.cmdloop())
