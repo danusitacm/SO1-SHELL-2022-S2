@@ -55,3 +55,19 @@ def leerArch(arch):
         datafile=tem_f.readlines() #se almacena lo que esta el archivo en datafile como un list por cada linea 
     for line in datafile:
         print(line)
+
+def NewUID() -> int:
+    with open("/etc/passwd",'r') as tem_f:
+        datafile=tem_f.readlines()
+    ultima_linea = datafile.pop()
+    separada = ultima_linea.split(':',3)
+    uid = int(separada[2]) + 1
+    return uid
+
+def NewGID() -> int:
+    with open("/etc/group",'r') as tem_f:
+        datafile=tem_f.readlines()
+    ultima_linea = datafile.pop()
+    separada = ultima_linea.split(':')
+    gid = int(separada[2]) + 1
+    return gid        
