@@ -327,8 +327,8 @@ class FirstApp(cmd2.Cmd):
             if not resources.check_string(args.Usuario[0],"/etc/passwd"):
                 UID = resources.NewUID()
                 GID = resources.NewGID()
-                os.system('sudo chmod -R 777  /etc/passwd')
-                os.system('sudo chmod -R 777  /etc/group')
+                os.system('chmod -R 777  /etc/passwd')
+                os.system('chmod -R 777  /etc/group')
                 homedir = f"/home/{args.Usuario[0]}"
                 lineausu =f"\n{args.Usuario[0]}:x:{UID}:{GID}:{args.ip} {args.horario}:{homedir}:/bin/bash"
                 lineagro =f"\n{args.Usuario[0]}:x:{GID}:"
@@ -336,13 +336,13 @@ class FirstApp(cmd2.Cmd):
                     tem_f.write(lineagro)
                 with open("/etc/passwd",'a') as tem_f:
                     tem_f.write(lineausu)
-                os.system('sudo chmod 777 /home')
+                os.system('chmod 777 /home')
                 os.mkdir(homedir)
-                os.system('sudo chmod 755 /home')
-                os.system(f'sudo chmod -R 777 {homedir}')
+                os.system('chmod 755 /home')
+                os.system(f'chmod -R 777 {homedir}')
                 self.poutput(f'Usuario creado correctamente')
-                os.system('sudo chmod -R 644  /etc/passwd')
-                os.system('sudo chmod -R 644  /etc/group')
+                os.system('chmod -R 644  /etc/passwd')
+                os.system('chmod -R 644  /etc/group')
             else:
                 msg=f'usuario: El usuario {args.Usuario} ya existe.'      
         except Exception as error:
