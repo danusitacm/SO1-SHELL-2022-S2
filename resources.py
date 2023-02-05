@@ -1,7 +1,6 @@
 import os
 from os import path
 import time
-import logs
 import cmd2
 import getpass
 import logs
